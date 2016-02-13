@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <ctime>
 
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -45,7 +46,7 @@ struct FTGLFont {
 
 GLuint programID, fontProgramID, textureProgramID;
 
-GLuint textureID[100];
+GLuint textureID[300];
 
 char buffer[20];
 
@@ -59,8 +60,8 @@ static const GLfloat texture_buffer_data [] = {
   0,1  // TexCoord 1 - bot left
 };
 
-VAO *cube, *player, *timer[16], *stars[3], *hearts[22], *background, *star, *heart;
-VAO *sphere, *spikes, *coin, *water[25], *square[2], *tree, *speedy[2];
+VAO *cube, *player, *timer[16], *stars[3], *hearts[22], *background, *star, *heart, *arya, *head, *limbs, *cube2;
+VAO *sphere, *spikes, *coin, *water[25], *square[2], *tree, *speedy[2], *throne, *soldier[120], *dragon[12], *grass, *wood;
 
 float eyeHeight = 10, blockCoordY = -1, playerCoordY = 4.2, playerCoordZ = -10, playerCoordX = -8;
 float playerRotation = 0, sphereRotation = 90;
@@ -68,9 +69,11 @@ float playerRotation = 0, sphereRotation = 90;
 float animateX = -10;
 float animateY = 3;
 
-bool starAnimate = false, heartAnimate = false;
+bool starAnimate = false, heartAnimate = false, lightOn = false;
 
 float speed = 1;
+double xpos, ypos, prevXpos, prevYpos;
+float zoom_flag = 0;
 
 float viewsX[5][10] = {
   {
@@ -118,7 +121,7 @@ float viewsZ[5][10] = {
   }
 };
 
-time_t currentTime, timeStamp, gameStart = 0;
+time_t currentTime, timeStamp, gameStart = 0, winTime = 0, loseTime = 0;
 
 vector< pair<int, int> > obstacles;
 vector< pair<int, int> > coins;
@@ -130,8 +133,8 @@ int hours, minutes, seconds;
 
 bool playerJumpUp = false, playerJumpDown = false, playerJumpRight = false, playerJumpLeft = false;
 bool playerMoveUp = false, playerMoveDown = false, playerMoveRight = false, playerMoveLeft = false;
-bool playerWin = false;
-int playerDirection = 1;
+bool playerWin = false, playerLose = false;
+int playerDirection = 3;
 
 
 bool playerFall = false, playerFallOff = false, playerAnimate = false;
@@ -166,6 +169,25 @@ bool isMoving[10][10] = {
   0, 0, 0, 0, 0, 0, 1, 0, 0, 0
 };
 
+void gameReset() {
+  playerLose = false;
+  loseTime = 0;
+  lives = 3;
+  points = 0;
+  gameStart = glfwGetTime();
+  playerWin = false;
+  playerFall = false, playerFallOff = false; 
+  playerX = 0;
+  playerZ = 0;
+  playerCoordY = 4.2;
+  playerCoordX = shiftX;
+  playerCoordZ = shiftZ;
+  playerJumpRight = playerJumpUp = playerJumpLeft = playerJumpDown = false;
+  playerDirection = 3;
+  playerMoveDown=  playerMoveLeft = playerMoveRight = playerMoveUp = false;
+
+}
+
 void updatePos() {
   for(int i = 0; i < 10; i++) {
     for(int j = 0; j< 10; j++) {
@@ -180,7 +202,14 @@ void updatePos() {
       }
     }
   }
-  if(playerX == 9 && playerZ == 9) playerWin = true;
+  if(playerX == 9 && playerZ == 9) {
+    playerWin = true;
+    if(winTime == 0) winTime = glfwGetTime();
+    if(glfwGetTime() - winTime > 5) {
+      gameReset();
+      winTime = 0;
+    }
+  }
   else if(playerCoordX < shiftX - 1) playerFallOff = true, playerX = -1;
   else if(playerCoordX >= 9*2+shiftX + 2) playerFallOff = true, playerX = 10;
   else if(playerCoordZ < shiftZ - 2) playerFallOff = true, playerZ = -1;
@@ -194,9 +223,17 @@ void playerReset(int f = 1) {
     playerAnimate = true;
   }
   if(playerAnimate) return;
-  lives--;
+
+
+  if(!playerLose) lives--;
+
+
   heartAnimate = true;
   if(lives==0) {
+    playerLose = true;
+    if(loseTime == 0) loseTime = glfwGetTime();
+    return;
+    playerLose = false, loseTime = 0;
     lives = 3;
     points = 0;
   gameStart = glfwGetTime();
@@ -210,6 +247,7 @@ void playerReset(int f = 1) {
   playerCoordX = shiftX;
   playerCoordZ = shiftZ;
   playerJumpRight = playerJumpUp = playerJumpLeft = playerJumpDown = false;
+  playerDirection = 3;
 }
 
 

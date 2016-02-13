@@ -1,6 +1,59 @@
 #include "custom.h"
+#include <AL/al.h>
+#include <AL/alc.h>
+
+#ifdef LIBAUDIO
+#include <audio/wave.h>
+#define BACKEND "libaudio"
+#else
+#include <AL/alut.h>
+#define BACKEND "alut"
+#endif
+
+static void list_audio_devices(const ALCchar *devices)
+{
+  const ALCchar *device = devices, *next = devices + 1;
+  size_t len = 0;
+
+  fprintf(stdout, "Devices list:\n");
+  fprintf(stdout, "----------\n");
+  while (device && *device != '\0' && next && *next != '\0') {
+    fprintf(stdout, "%s\n", device);
+    len = strlen(device);
+    device += (len + 1);
+    next += (len + 2);
+  }
+  fprintf(stdout, "----------\n");
+}
+
+#define TEST_ERROR(_msg)    \
+  error = alGetError();   \
+  if (error != AL_NO_ERROR) { \
+    fprintf(stderr, _msg "\n"); \
+    return -1;    \
+  }
 
 
+
+static inline ALenum to_al_format(short channels, short samples)
+{
+  bool stereo = (channels > 1);
+
+  switch (samples) {
+  case 16:
+    if (stereo)
+      return AL_FORMAT_STEREO16;
+    else
+      return AL_FORMAT_MONO16;
+  case 8:
+    if (stereo)
+      return AL_FORMAT_STEREO8;
+    else
+      return AL_FORMAT_MONO8;
+  default:
+    return -1;
+  }
+}
 
 
 /* Function to load Shaders - Use it as it is */
@@ -285,6 +338,11 @@ GLuint createTexture (const char* filename)
   return TextureID;
 }
 
+void scrollCallback(GLFWwindow* window, double x, double y) {
+  if(y > 0) zoom_flag -= 0.5;
+  else if(y < 0) zoom_flag += 0.5;
+}
+
 
 void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -294,17 +352,47 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
     if(key == GLFW_KEY_R) {
       viewPtr[currentView] = (viewPtr[currentView]+1) % numSubViews[currentView]; 
     }
+    if(key == GLFW_KEY_L) lightOn = !lightOn;
     if(key == GLFW_KEY_UP) {
-      playerMoveUp = false;
+      if(currentView == 2 or currentView == 3) {
+
+      if(playerDirection == 1) playerMoveUp = false;
+      else if(playerDirection == 2) playerMoveDown = false;
+      else if(playerDirection == 3) playerMoveRight = false;
+      else if(playerDirection == 4) playerMoveLeft = false;
+    }
+    else playerMoveUp = false;
+
     }
     else if(key == GLFW_KEY_DOWN) {
-      playerMoveDown = false;
+      if(currentView == 2 or currentView == 3) {
+
+       if(playerDirection == 1) playerMoveUp = false;
+      else if(playerDirection == 2) playerMoveDown = false;
+      else if(playerDirection == 3) playerMoveRight = false;
+      else if(playerDirection == 4) playerMoveLeft = false;
     }
+  else playerMoveDown = false;
+          }
     else if(key == GLFW_KEY_RIGHT) {
-      playerMoveRight = false;
+      if(currentView == 2 or currentView == 3) {
+
+       if(playerDirection == 1) playerMoveUp = false;
+      else if(playerDirection == 2) playerMoveDown = false;
+      else if(playerDirection == 3) playerMoveRight = false;
+      else if(playerDirection == 4) playerMoveLeft = false;
+    }
+    else playerMoveRight = false;
     }
     else if(key == GLFW_KEY_LEFT) {
-      playerMoveLeft = false;
+      if(currentView == 2 or currentView == 3) {
+
+       if(playerDirection == 1) playerMoveUp = false;
+      else if(playerDirection == 2) playerMoveDown = false;
+      else if(playerDirection == 3) playerMoveRight = false;
+      else if(playerDirection == 4) playerMoveLeft = false;
+    }
+    else playerMoveLeft = false;
     }
     else if(key == GLFW_KEY_F && speed<7) speed += 1;
     else if(key == GLFW_KEY_S && speed>0) speed -= 1;
@@ -325,56 +413,91 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
      if(key == GLFW_KEY_UP && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ;
-      playerJumpUp = true;
-      playerDirection = 1;
-
-
+       if(currentView == 2 or currentView == 3) {
+        if(playerDirection == 1) playerJumpUp = true;
+      else if(playerDirection == 3) playerJumpRight = true;
+      else if(playerDirection == 2) playerJumpDown = true;
+      else if(playerDirection == 4) playerJumpLeft = true;
+    }
+    else playerJumpUp = true, playerDirection = 1;
     }
     else if(key == GLFW_KEY_DOWN && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ;     
-      playerJumpDown = true;
-      playerDirection = 2;
+       if(currentView == 2 or currentView == 3) {
 
-
+      if(playerDirection == 1) playerJumpDown = true, playerDirection = 2;
+      else if(playerDirection == 3) playerJumpLeft = true, playerDirection = 4;
+      else if(playerDirection == 4) playerJumpRight = true, playerDirection = 3;
+      else if(playerDirection == 2) playerJumpUp = true, playerDirection = 1;
+    }
+    else playerJumpDown = true, playerDirection = 2;
     }
     else if(key == GLFW_KEY_RIGHT && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ; 
-      playerJumpRight = true;
-      playerDirection = 3;
+       if(currentView == 2 or currentView == 3) {
+
+       if(playerDirection == 3) playerJumpDown = true, playerDirection = 2;
+      else if(playerDirection == 1) playerJumpRight = true, playerDirection = 3;
+      else if(playerDirection == 4) playerJumpUp = true, playerDirection = 1;
+      else if(playerDirection == 2) playerJumpLeft = true, playerDirection = 4;    
+    }
+    else playerJumpRight = true, playerDirection = 3;
 
     }
     else if(key == GLFW_KEY_LEFT && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ; 
-      playerJumpLeft = true;
-      playerDirection = 4;
+      if(currentView == 2 or currentView == 3) {
 
-
+       if(playerDirection == 1) playerJumpLeft = true, playerDirection = 4;
+      else if(playerDirection == 2) playerJumpRight = true, playerDirection = 3;
+      else if(playerDirection == 3) playerJumpUp = true, playerDirection = 1;
+      else if(playerDirection == 4) playerJumpDown = true, playerDirection = 2;    
+    }
+    else playerJumpLeft = true, playerDirection = 4;
     }
     else if(key == GLFW_KEY_UP) {
-      playerMoveUp = true;
-      playerDirection = 1;
-
-     
+      if(currentView == 2 or currentView == 3) {
+        if(playerDirection == 1) playerMoveUp = true;
+      else if(playerDirection == 3) playerMoveRight = true;
+      else if(playerDirection == 2) playerMoveDown = true;
+      else if(playerDirection == 4) playerMoveLeft = true;
+    }
+    else playerMoveUp = true, playerDirection = 1;
     }
     else if(key == GLFW_KEY_DOWN) {
-      playerMoveDown = true;
-      playerDirection = 2;
+      if(currentView == 2 or currentView == 3) {
 
-     
+      if(playerDirection == 1) playerMoveDown = true, playerDirection = 2;
+      else if(playerDirection == 3) playerMoveLeft = true, playerDirection = 4;
+      else if(playerDirection == 4) playerMoveRight = true, playerDirection = 3;
+      else if(playerDirection == 2) playerMoveUp = true, playerDirection = 1;
+    }
+    else playerMoveDown = true, playerDirection = 2;
+
     }
     else if(key == GLFW_KEY_RIGHT) {
-      playerMoveRight = true;
-      playerDirection = 3;
+      if(currentView == 2 or currentView == 3) {
 
+       if(playerDirection == 3) playerMoveDown = true, playerDirection = 2;
+      else if(playerDirection == 1) playerMoveRight = true, playerDirection = 3;
+      else if(playerDirection == 4) playerMoveUp = true, playerDirection = 1;
+      else if(playerDirection == 2) playerMoveLeft = true, playerDirection = 4;    
+    }
+    else playerMoveRight = true, playerDirection = 3;
 
-    
     }
     else if(key == GLFW_KEY_LEFT) {
-      playerMoveLeft = true;
-      playerDirection = 4;
+      if(currentView == 2 or currentView == 3) {
+
+       if(playerDirection == 1) playerMoveLeft = true, playerDirection = 4;
+      else if(playerDirection == 2) playerMoveRight = true, playerDirection = 3;
+      else if(playerDirection == 3) playerMoveUp = true, playerDirection = 1;
+      else if(playerDirection == 4) playerMoveDown = true, playerDirection = 2;    
+    }
+    else playerMoveLeft = true, playerDirection = 4;
 
     }   
   }
@@ -398,11 +521,25 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
 {
   switch (button) {
     case GLFW_MOUSE_BUTTON_LEFT:
-      if (action == GLFW_RELEASE)
+      if (action == GLFW_PRESS) {
+                glfwGetCursorPos(window, &xpos, &ypos);
+        prevXpos = xpos;
+        prevYpos = ypos;
+      }
 
-        break;
-    case GLFW_MOUSE_BUTTON_RIGHT:
+
       if (action == GLFW_RELEASE) {
+
+        glfwGetCursorPos(window, &xpos, &ypos);
+        if(xpos > prevXpos) {
+          viewPtr[currentView]--;
+          if(viewPtr[currentView] < 0) viewPtr[currentView] = numSubViews[currentView] - 1;
+         
+        }
+        else if(xpos < prevXpos) {
+      viewPtr[currentView] = (viewPtr[currentView] + 1) % numSubViews[currentView]; 
+  
+        }
 
       }
       break;
@@ -453,7 +590,7 @@ GLFWwindow* initGLFW (int width, int height)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = glfwCreateWindow(width, height, "Sample OpenGL 3.3 Application", NULL, NULL);
+  window = glfwCreateWindow(width, height, "Valar Morghulis", NULL, NULL);
 
   if (!window) {
     glfwTerminate();
@@ -481,6 +618,7 @@ GLFWwindow* initGLFW (int width, int height)
 
   /* Register function to handle mouse click */
   glfwSetMouseButtonCallback(window, mouseButton);  // mouse button clicks
+  glfwSetScrollCallback(window, scrollCallback);
 
   return window;
 }
@@ -535,6 +673,47 @@ void createShapes() {
   b = 1;
   h = 18;
   static const GLfloat vertex_buffer_data_water [] = {
+    -l,-b,-h, // triangle 1 : begin
+    -l,-b, h,
+    -l, b, h, // triangle 1 : end
+    l, b,-h, // triangle 2 : begin
+    -l,-b,-h,
+    -l, b,-h, // triangle 2 : end
+    l,-b, h,
+    -l,-b,-h,
+    l,-b,-h,
+    l, b,-h,
+    l,-b,-h,
+    -l,-b,-h,
+    -l,-b,-h,
+    -l, b, h,
+    -l, b,-h,
+    l,-b, h,
+    -l,-b, h,
+    -l,-b,-h,
+    -l, b, h,
+    -l,-b, h,
+    l,-b, h,
+    l, b, h,
+    l,-b,-h,
+    l, b,-h,
+    l,-b,-h,
+    l, b, h,
+    l,-b, h,
+    l, b, h,
+    l, b,-h,
+    -l,b,-h,
+    l, b, h,
+    -l, b,-h,
+    -l, b, h,
+    l, b, h,
+    -l, b, h,
+    l,-b, h
+  };
+    l = 0.2;
+  b = 0.9;
+  h = 0.2;
+  static const GLfloat vertex_buffer_data_limbs [] = {
     -l,-b,-h, // triangle 1 : begin
     -l,-b, h,
     -l, b, h, // triangle 1 : end
@@ -751,22 +930,32 @@ void createShapes() {
 
   static GLfloat color_buffer_data_player[36*3];
   for(int i=0; i<36*3; i+=3) {
-    color_buffer_data_player[i] = 0.3;
-    color_buffer_data_player[i+1] = 0.3;
-    color_buffer_data_player[i+2] = 0.3;
+    color_buffer_data_player[i] = 0;
+        color_buffer_data_player[i+1] = 0;
+    color_buffer_data_player[i+2] = 0;
 }
   
-    static GLfloat color_buffer_data_water[36*3];
+    static GLfloat color_buffer_data_limbs[36*3];
   for(int i=0; i<36*3; i+=3) {
-    color_buffer_data_water[i] = 6.0/255.0;
-    color_buffer_data_water[i+1] = 123.0/255.0;
-    color_buffer_data_water[i+2] = 255.0/255.0;
+    color_buffer_data_limbs[i] = 1;
+    color_buffer_data_limbs[i+1] =0;
+    color_buffer_data_limbs[i+2] = 0;
 
   }
-  cube = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data_block, color_buffer_data_block, GL_FILL);
+    static GLfloat color_buffer_data_temp[36*3];
+  for(int i=0; i<36*3; i+=3) {
+    color_buffer_data_temp[i] = 0;
+    color_buffer_data_temp[i+1] =0;
+    color_buffer_data_temp[i+2] =0;
+
+  }
+  cube = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data_block, color_buffer_data_temp, GL_FILL);
+  cube2 = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data_block, color_buffer_data_temp, GL_LINE);
+
   coin = create3DObject(GL_TRIANGLES, 24, vertex_buffer_data_coin, color_buffer_data_coin, GL_FILL);
   spikes = create3DObject(GL_TRIANGLES, 24, vertex_buffer_data_spikes, color_buffer_data_spikes, GL_FILL);
   player = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data_player, color_buffer_data_player, GL_FILL);
+  limbs = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data_limbs, color_buffer_data_limbs, GL_FILL);
 }
 
 void createRectangle ()
@@ -800,6 +989,7 @@ void createRectangle ()
     -18, 18,0, // vertex 4
     -18,-18,0  // vertex 1
   };
+  
 
    static const GLfloat vertex_buffer_data4 [] = {
     -1,-1,0, // vertex 1
@@ -820,6 +1010,33 @@ void createRectangle ()
         -w/2,-h/2,0, // vertex 1
         w/2, h/2,0, // vertex 3
         -w/2, h/2,0 // vertex 4
+      };
+      w = 8, h = 8;
+
+      GLfloat vertex_buffer_data5 [] = {
+         -w/2,-h/2,0, // vertex 1
+        w/2,-h/2,0, // vertex 2
+        w/2, h/2,0, // vertex 3
+
+
+      
+        w/2, h/2,0, // vertex 3
+        -w/2, h/2,0, // vertex 4
+          -w/2,-h/2,0 // vertex 1
+      };
+
+          w = 14, h = 4;
+
+      GLfloat vertex_buffer_data6 [] = {
+         -w/2,-h/2,0, // vertex 1
+        w/2,-h/2,0, // vertex 2
+        w/2, h/2,0, // vertex 3
+
+
+      
+        w/2, h/2,0, // vertex 3
+        -w/2, h/2,0, // vertex 4
+          -w/2,-h/2,0 // vertex 1
       };
 
       GLfloat color_buffer_data_speedy [] = {
@@ -856,9 +1073,22 @@ void createRectangle ()
    for(int i = 0; i<25; i++) {
     water[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data3, texture_buffer_data, textureID[41+i], GL_FILL);
   }
+  for(int i=0; i<120; i++)
+    soldier[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data5, texture_buffer_data, textureID[72+i], GL_FILL);
+  for(int i = 0; i<12; i++) 
+    dragon[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data5, texture_buffer_data, textureID[192+i], GL_FILL);
+
   square[0] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[66], GL_FILL);
   square[1] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[67], GL_FILL);
+  grass = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[204], GL_FILL);
+  wood = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[205], GL_FILL);
+
   tree = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[68], GL_FILL);
+  arya = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data, texture_buffer_data, textureID[204], GL_FILL);
+
+
+  throne = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data6, texture_buffer_data, textureID[71], GL_FILL);
+
   star = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[69], GL_FILL);
   heart = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[70], GL_FILL);
 
@@ -896,8 +1126,42 @@ void createSphere(int slices, int stacks) {
       i++;
     }
   }
-
   sphere = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
+
+
+  slices = 10, stacks = 10;
+  float r = 0.5;
+  i=0, numPoints = 2 * (slices + 1) * stacks;
+
+
+  for (float theta = -M_PI / 2; theta < M_PI / 2 - 0.0001; theta += M_PI / stacks) {
+    for (float phi = -M_PI; phi <= M_PI + 0.0001; phi += 2 * M_PI / slices) {
+
+      points[3*i] = r*(cos(theta) * sin(phi));
+      points[3*i + 1] = r*(-sin(theta));
+      points[3*i + 2] = r*(cos(theta) * cos(phi));
+
+      color[3*i] = 1;
+      color[3*i + 1] = 1;
+      color[3*i + 2] = 0;
+
+      i++;
+
+      points[3*i] = r*(cos(theta + M_PI / stacks) * sin(phi));
+      points[3*i + 1] = r*( -sin(theta + M_PI / stacks));
+      points[3*i + 2] = r*( cos(theta + M_PI / stacks) * cos(phi));
+
+      color[3*i] = 1;
+      color[3*i + 1] = 1;
+      color[3*i + 2] = 0;
+
+      i++;
+    }
+  }
+
+
+  head = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
+
 
 }
 
@@ -985,6 +1249,21 @@ void initGL (GLFWwindow* window, int width, int height)
   textureID[68] = createTexture("images/tree.png");
   textureID[69] = createTexture("images/star.jpg");
   textureID[70] = createTexture("images/heart.png");
+  textureID[71] = createTexture("images/throne.jpg");
+  char ibuf[100];
+  for(int i = 0; i<120; i++) {
+  snprintf(ibuf, sizeof(ibuf), "images/soldier/o_a71eebd8de89d627-%d.jpg", i);
+    textureID[72+i] = createTexture(ibuf);
+  }
+  for(int i = 0; i<12; i++) {
+  snprintf(ibuf, sizeof(ibuf), "images/dragon/o_b90b52b369699b6e-%d.jpg", i);
+    textureID[192+i] = createTexture(ibuf);
+  }
+
+  textureID[204] = createTexture("images/grass.jpg");
+  textureID[205] = createTexture("images/wood.jpg");
+
+
 
 
 
@@ -1156,6 +1435,58 @@ void drawStars() {
 
 
 }
+void drawSoldier() {
+  if(currentView == 0 and (viewPtr[currentView] == 0 or viewPtr[currentView] == 1 or viewPtr[currentView] == 2)) {
+
+
+  static int i = 0, frames = 0;
+  if(frames == 2) frames = 0;
+  if(frames == 0) {
+    i++;
+    if(i==120) i = 0;
+  }
+  frames++;
+  glUseProgram (textureProgramID);
+  glm::mat4 translateRectangle, rotateRectangle;
+  glm::mat4 VP = Matrices.projection * Matrices.view;
+  glm::mat4 MVP;  // MVP = Projection * View * Model
+  Matrices.model = glm::mat4(1.0f);
+  translateRectangle = glm::translate (glm::vec3(13,4,18));    
+  rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
+  Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
+  MVP = VP * Matrices.model;
+  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+  draw3DTexturedObject(soldier[i]);
+}
+
+}
+
+void drawDragon() {
+  if(currentView == 0 and (viewPtr[currentView] == 0 or viewPtr[currentView] == 1 or viewPtr[currentView] == 7)) {
+
+  static int i = 0, frames = 0;
+  if(frames == 6) frames = 0;
+  if(frames == 0) {
+    i++;
+    if(i==12) i = 0;
+  }
+  frames++;
+  glUseProgram (textureProgramID);
+  glm::mat4 translateRectangle, rotateRectangle;
+  glm::mat4 VP = Matrices.projection * Matrices.view;
+  glm::mat4 MVP;  // MVP = Projection * View * Model
+  Matrices.model = glm::mat4(1.0f);
+  translateRectangle = glm::translate (glm::vec3(11,6,10));    
+  rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
+  Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
+  MVP = VP * Matrices.model;
+  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+  draw3DTexturedObject(dragon[i]);
+
+}
+}
 
 void drawAnimate(VAO *object) {
   animateX += 0.1;
@@ -1181,6 +1512,7 @@ void drawAnimate(VAO *object) {
 
 
 }
+
 
 void drawLives() {
 
@@ -1231,7 +1563,7 @@ void writeTexts() {
   Matrices.model = glm::mat4(1.0f);
   translateText = glm::translate(glm::vec3(-2, 4,0));
   scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
-  Matrices.model *= (translateText * scaleText);
+  Matrices.model *= (translateText);
   MVP = Matrices.projection * Matrices.view * Matrices.model;
 
   // send font's MVP and font color to fond shaders
@@ -1239,6 +1571,17 @@ void writeTexts() {
   glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
   snprintf(buffer, sizeof(buffer), "%s", "Congratulations!");
   if(playerWin) GL3Font.font->Render(buffer);
+  Matrices.model = glm::mat4(1.0f);
+  translateText = glm::translate(glm::vec3(-2, 4,0));
+  scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
+  Matrices.model *= (translateText);
+  MVP = Matrices.projection * Matrices.view * Matrices.model;
+
+  // send font's MVP and font color to fond shaders
+  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
+  snprintf(buffer, sizeof(buffer), "%s", "You Lose!");
+  if(playerLose) GL3Font.font->Render(buffer);
 
   Matrices.model = glm::mat4(1.0f);
   translateText = glm::translate(glm::vec3(-2.4,4.8,0));
@@ -1280,6 +1623,8 @@ float camera_rotation_angle = 90;
 /* Edit this function according to your assignment */
 void draw ()
 {
+  if(glfwGetTime() - loseTime > 5 && playerLose) gameReset();
+
   static int frames = 0;
   drawFall();
   drawJump();
@@ -1317,16 +1662,29 @@ void draw ()
       viewsZ[2][0] = playerCoordZ + 4, viewsX[2][0] = playerCoordX;
       beta = -2;
     }
+    float eyeX, eyeY, eyeZ;
+    eyeX = viewsX[currentView][viewPtr[currentView]];
+    eyeY = viewsY[currentView][viewPtr[currentView]];
+    eyeZ = viewsZ[currentView][viewPtr[currentView]];
+    if(currentView == 0 or currentView == 1) eyeY += zoom_flag;
+    else if(currentView == 2 or currentView == 3 and zoom_flag < 4 and zoom_flag >-4) {
+      if(playerDirection == 1) eyeX -= zoom_flag;
+      if(playerDirection == 2) eyeX += zoom_flag;
+      if(playerDirection == 3) eyeZ -= zoom_flag;
+      if(playerDirection == 4) eyeZ += zoom_flag;
 
+    }
 
   // Eye - Location of camera. Don't change unless you are sure!!
   //glm::vec3 eye ( 5*cos(camera_rotation_angle*M_PI/180.0f), 0, 5*sin(camera_rotation_angle*M_PI/180.0f) );
-  glm::vec3 eye ( viewsX[currentView][viewPtr[currentView]], viewsY[currentView][viewPtr[currentView]], viewsZ[currentView][viewPtr[currentView]] );
+  glm::vec3 eye ( eyeX, eyeY, eyeZ);
 
   // Target - Where is the camera looking at.  Don't change unless you are sure!!
   glm::vec3 target (0, 0, 0);
     glm::vec3 target2 (playerCoordX, 0, playerCoordZ);
     glm::vec3 target3 (playerCoordX + alpha, playerCoordY + 1.8, playerCoordZ + beta);
+
+
 
 
   // Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
@@ -1381,13 +1739,17 @@ else
          for(int i = 0; i<12; i++) {
           Matrices.model = glm::mat4(1.0f);
   if(currentView == 0 && viewPtr[0] <5) translateRectangle = glm::translate (glm::vec3(-15 + 2*i, min(5.0, 4.8 + i*0.1), -10));
-  rotateRectangle = glm::rotate((float)(0*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
-  Matrices.model *= (translateRectangle * rotateRectangle);
+  
+  Matrices.model *= (translateRectangle);
   MVP = VP * Matrices.model;
   glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
   glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
   draw3DTexturedObject(tree);
 }
+
+
+drawSoldier();
+drawDragon();
 glUseProgram (programID);
   for(int i=0; i<10; i++) {
     for(int j = 0; j<10; j++) {
@@ -1416,21 +1778,34 @@ glUseProgram (programID);
   VP = Matrices.projection * Matrices.view;
   MVP;  // MVP = Projection * View * Model
   Matrices.model = glm::mat4(1.0f);
-  if(!isMoving[i][j]) translateRectangle = glm::translate (glm::vec3(i*2+shiftX, 3.1, j*2+shiftZ));
-  else translateRectangle = glm::translate (glm::vec3(i*2+shiftX, blockCoordY+3.1, j*2+shiftZ));
+  if(!isMoving[i][j]) translateRectangle = glm::translate (glm::vec3(i*2+shiftX, 3.05, j*2+shiftZ));
+  else translateRectangle = glm::translate (glm::vec3(i*2+shiftX, blockCoordY+3.05, j*2+shiftZ));
   rotateRectangle = glm::rotate((float)(-90*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
   Matrices.model *= (translateRectangle * rotateRectangle);
   MVP = VP * Matrices.model;
   glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
-  draw3DTexturedObject(square[(i+j)%2]);
+  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0); 
+
+  if(lightOn == true) {
+    if(playerX >= i-1 && playerX<=i+1 && playerZ >= j-1 && playerZ <= j+1) {
+    if((i+j )% 2) 
+  draw3DTexturedObject(grass);
+else
+  draw3DTexturedObject(wood);
+}
+    else draw3DTexturedObject(square[(i+j)%2]);
+  }
+  else draw3DTexturedObject(square[(i+j)%2]);
 
  
 }
   glUseProgram(programID);
       if((playerX == i && playerZ == j) || playerZ>9 || playerX>9 || playerX<0 || playerZ<0) {
+         
+      
+      
         Matrices.model = glm::mat4(1.0f);
-        translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*2, playerCoordZ)); // glTranslatef
+        translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*2+1.5, playerCoordZ)); // glTranslatef
         rotateCube = glm::rotate((float)(sphereRotation*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
         glm::mat4 rotateCube2 = glm::rotate((float)(sphereRotation*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
 
@@ -1444,11 +1819,226 @@ glUseProgram (programID);
         //  Don't change unless you are sure!!
         // Copy MVP to normal shaders
         glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        if(!playerAnimate) draw3DObject(player); 
+        if(!playerAnimate) {
+          draw3DObject(player); 
+          Matrices.model = glm::mat4(1.0f);
+    translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3, playerCoordZ)); // glTranslatef
+   
+
+    CubeTransform = translateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(head);
+        Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY, playerCoordZ)); // glTranslatef
+
+    rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+     else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ-0.5)); // glTranslatef
+    rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+   
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+      Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY, playerCoordZ)); // glTranslatef
+    rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+   else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ+0.5)); // glTranslatef
+    rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+        Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2, playerCoordZ)); // glTranslatef
+   
+    rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+   else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ+1)); // glTranslatef
+    rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+         Matrices.model = glm::mat4(1.0f);
+   if(playerDirection == 3 or playerDirection == 4)  {
+   translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2, playerCoordZ)); // glTranslatef
+   
+    rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+     else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ-1)); // glTranslatef
+    rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+  }
+
         else {
           frames++;
           if(frames == 10) {
             draw3DObject(player);
+            Matrices.model = glm::mat4(1.0f);
+    translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3, playerCoordZ)); // glTranslatef
+   
+
+    CubeTransform = translateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(head);
+        Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY, playerCoordZ)); // glTranslatef
+
+    rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+     else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ-0.5)); // glTranslatef
+    rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+   
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+      Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY, playerCoordZ)); // glTranslatef
+    rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+   else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ+0.5)); // glTranslatef
+    rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+        Matrices.model = glm::mat4(1.0f);
+    if(playerDirection == 3 or playerDirection == 4) {
+    translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2, playerCoordZ)); // glTranslatef
+   
+    rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+   else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ+1)); // glTranslatef
+    rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
+         Matrices.model = glm::mat4(1.0f);
+   if(playerDirection == 3 or playerDirection == 4)  {
+   translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2, playerCoordZ)); // glTranslatef
+   
+    rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+  }
+     else {
+     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ-1)); // glTranslatef
+    rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+
+   }
+
+    CubeTransform = translateCube * rotateCube;
+
+    Matrices.model *= CubeTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    //  Don't change unless you are sure!!
+    // Copy MVP to normal shaders
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    draw3DObject(limbs);
             frames = 0;
             if(glfwGetTime() - timeStamp > 2.5) {
               playerAnimate = false;
@@ -1509,6 +2099,7 @@ glUseProgram (programID);
   drawTimer();
   drawStars();
   drawLives();
+
   if(starAnimate) drawAnimate(star);
   if(heartAnimate) drawAnimate(heart);
 
@@ -1522,6 +2113,121 @@ glUseProgram (programID);
 
 int main (int argc, char** argv)
 {
+  ALboolean enumeration;
+  const ALCchar *devices;
+  const ALCchar *defaultDeviceName = argv[1];
+  int ret;
+#ifdef LIBAUDIO
+  WaveInfo *wave;
+#endif
+  char *bufferData;
+  ALCdevice *device;
+  ALvoid *data;
+  ALCcontext *context;
+  ALsizei size, freq;
+  ALenum format;
+  ALuint buffer, source;
+  ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+  ALboolean loop = AL_FALSE;
+  ALCenum error;
+  ALint source_state;
+
+  fprintf(stdout, "Using " BACKEND " as audio backend\n");
+
+  enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
+  if (enumeration == AL_FALSE)
+    fprintf(stderr, "enumeration extension not available\n");
+
+  list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
+
+  if (!defaultDeviceName)
+    defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+
+  device = alcOpenDevice(defaultDeviceName);
+  if (!device) {
+    fprintf(stderr, "unable to open default device\n");
+    return -1;
+  }
+
+  fprintf(stdout, "Device: %s\n", alcGetString(device, ALC_DEVICE_SPECIFIER));
+
+  alGetError();
+
+  context = alcCreateContext(device, NULL);
+  if (!alcMakeContextCurrent(context)) {
+    fprintf(stderr, "failed to make default context\n");
+    return -1;
+  }
+  TEST_ERROR("make default context");
+
+  /* set orientation */
+  alListener3f(AL_POSITION, 0, 0, 1.0f);
+  TEST_ERROR("listener position");
+      alListener3f(AL_VELOCITY, 0, 0, 0);
+  TEST_ERROR("listener velocity");
+  alListenerfv(AL_ORIENTATION, listenerOri);
+  TEST_ERROR("listener orientation");
+
+  alGenSources((ALuint)1, &source);
+  TEST_ERROR("source generation");
+
+  alSourcef(source, AL_PITCH, 1);
+  TEST_ERROR("source pitch");
+  alSourcef(source, AL_GAIN, 1);
+  TEST_ERROR("source gain");
+  alSource3f(source, AL_POSITION, 0, 0, 0);
+  TEST_ERROR("source position");
+  alSource3f(source, AL_VELOCITY, 0, 0, 0);
+  TEST_ERROR("source velocity");
+  alSourcei(source, AL_LOOPING, AL_TRUE);
+  TEST_ERROR("source looping");
+
+  alGenBuffers(1, &buffer);
+  TEST_ERROR("buffer generation");
+
+#ifdef LIBAUDIO
+  /* load data */
+  wave = WaveOpenFileForReading("music.wav");
+  if (!wave) {
+    fprintf(stderr, "failed to read wave file\n");
+    return -1;
+  }
+
+  ret = WaveSeekFile(0, wave);
+  if (ret) {
+    fprintf(stderr, "failed to seek wave file\n");
+    return -1;
+  }
+
+  bufferData = malloc(wave->dataSize);
+  if (!bufferData) {
+    perror("malloc");
+    return -1;
+  }
+
+  ret = WaveReadFile(bufferData, wave->dataSize, wave);
+  if (ret != wave->dataSize) {
+    fprintf(stderr, "short read: %d, want: %d\n", ret, wave->dataSize);
+    return -1;
+  }
+
+  alBufferData(buffer, to_al_format(wave->channels, wave->bitsPerSample),
+      bufferData, wave->dataSize, wave->sampleRate);
+  TEST_ERROR("failed to load buffer data");
+#else
+  alutLoadWAVFile((ALbyte* )"music.wav", &format, &data, &size, &freq, &loop);
+  TEST_ERROR("loading wav file");
+
+  alBufferData(buffer, format, data, size, freq);
+  TEST_ERROR("buffer copy");
+#endif
+
+  alSourcei(source, AL_BUFFER, buffer);
+  TEST_ERROR("buffer binding");
+
+  alSourcePlay(source);
+  TEST_ERROR("source playing");
+
   int width = 1400;
   int height = 714;
 
@@ -1552,6 +2258,23 @@ int main (int argc, char** argv)
       last_update_time = current_time;
     }
   }
+  alGetSourcei(source, AL_SOURCE_STATE, &source_state);
+  TEST_ERROR("source state get");
+  while (source_state == AL_PLAYING) {
+    alGetSourcei(source, AL_SOURCE_STATE, &source_state);
+    TEST_ERROR("source state get");
+  }
+
+  
+
+
+  /* exit context */
+  alDeleteSources(1, &source);
+  alDeleteBuffers(1, &buffer);
+  device = alcGetContextsDevice(context);
+  alcMakeContextCurrent(NULL);
+  alcDestroyContext(context);
+  alcCloseDevice(device);
 
   glfwTerminate();
   exit(EXIT_SUCCESS);
