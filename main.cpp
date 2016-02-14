@@ -1808,7 +1808,7 @@ void draw ()
 
           }
           else if(playerDirection == 3) {
-             if(j-playerZ<=2 && j>=playerZ && playerX >= i-1 && playerX <= i+1) {
+            if(j-playerZ<=2 && j>=playerZ && playerX >= i-1 && playerX <= i+1) {
               if((i+j )% 2) 
                 draw3DTexturedObject(grass);
               else
@@ -1818,7 +1818,7 @@ void draw ()
 
           }
           else{
-             if(j-playerZ>=-2 && j<=playerZ && playerX >= i-1 && playerX <= i+1) {
+            if(j-playerZ>=-2 && j<=playerZ && playerX >= i-1 && playerX <= i+1) {
               if((i+j )% 2) 
                 draw3DTexturedObject(grass);
               else
@@ -1827,8 +1827,8 @@ void draw ()
             else draw3DTexturedObject(square[(i+j)%2]);
           }
         }
-         
-          else draw3DTexturedObject(square[(i+j)%2]);
+
+        else draw3DTexturedObject(square[(i+j)%2]);
 
 
       }

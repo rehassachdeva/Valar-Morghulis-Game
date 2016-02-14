@@ -86,7 +86,7 @@ float viewsX[5][10] = {
     -12
   },
   {
--8
+    -8
   }
 
 };
@@ -102,13 +102,13 @@ float viewsY[5][10] = {
     15
   },
   {
-6.2
+    6.2
   }
 };
 
 float viewsZ[5][10] = {
   {
-   10, 15, 20, 25, 20, -25, -30, -10
+    10, 15, 20, 25, 20, -25, -30, -10
   },
   {
     0
@@ -117,7 +117,7 @@ float viewsZ[5][10] = {
     -14
   },
   {
--10
+    -10
   }
 };
 
@@ -236,7 +236,7 @@ void playerReset(int f = 1) {
     playerLose = false, loseTime = 0;
     lives = 3;
     points = 0;
-  gameStart = glfwGetTime();
+    gameStart = glfwGetTime();
 
   }
 
@@ -390,8 +390,8 @@ void drawMove() {
     playerFall = true;
     if(!isPresent[playerX][playerZ]) {
       playerCoordX = playerX*2+shiftX;
-    playerCoordZ = playerZ*2+shiftZ;
-  }
+      playerCoordZ = playerZ*2+shiftZ;
+    }
   }
   checkCollision();
 }
