@@ -28,10 +28,10 @@ static void list_audio_devices(const ALCchar *devices)
 
 #define TEST_ERROR(_msg)    \
   error = alGetError();   \
-  if (error != AL_NO_ERROR) { \
-    fprintf(stderr, _msg "\n"); \
-    return -1;    \
-  }
+if (error != AL_NO_ERROR) { \
+  fprintf(stderr, _msg "\n"); \
+  return -1;    \
+}
 
 
 
@@ -40,18 +40,18 @@ static inline ALenum to_al_format(short channels, short samples)
   bool stereo = (channels > 1);
 
   switch (samples) {
-  case 16:
-    if (stereo)
-      return AL_FORMAT_STEREO16;
-    else
-      return AL_FORMAT_MONO16;
-  case 8:
-    if (stereo)
-      return AL_FORMAT_STEREO8;
-    else
-      return AL_FORMAT_MONO8;
-  default:
-    return -1;
+    case 16:
+      if (stereo)
+        return AL_FORMAT_STEREO16;
+      else
+        return AL_FORMAT_MONO16;
+    case 8:
+      if (stereo)
+        return AL_FORMAT_STEREO8;
+      else
+        return AL_FORMAT_MONO8;
+    default:
+      return -1;
   }
 }
 
@@ -356,50 +356,50 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
     if(key == GLFW_KEY_UP) {
       if(currentView == 2 or currentView == 3) {
 
-      if(playerDirection == 1) playerMoveUp = false;
-      else if(playerDirection == 2) playerMoveDown = false;
-      else if(playerDirection == 3) playerMoveRight = false;
-      else if(playerDirection == 4) playerMoveLeft = false;
-    }
-    else playerMoveUp = false;
+        if(playerDirection == 1) playerMoveUp = false;
+        else if(playerDirection == 2) playerMoveDown = false;
+        else if(playerDirection == 3) playerMoveRight = false;
+        else if(playerDirection == 4) playerMoveLeft = false;
+      }
+      else playerMoveUp = false;
 
     }
     else if(key == GLFW_KEY_DOWN) {
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 1) playerMoveUp = false;
-      else if(playerDirection == 2) playerMoveDown = false;
-      else if(playerDirection == 3) playerMoveRight = false;
-      else if(playerDirection == 4) playerMoveLeft = false;
+        if(playerDirection == 1) playerMoveUp = false;
+        else if(playerDirection == 2) playerMoveDown = false;
+        else if(playerDirection == 3) playerMoveRight = false;
+        else if(playerDirection == 4) playerMoveLeft = false;
+      }
+      else playerMoveDown = false;
     }
-  else playerMoveDown = false;
-          }
     else if(key == GLFW_KEY_RIGHT) {
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 1) playerMoveUp = false;
-      else if(playerDirection == 2) playerMoveDown = false;
-      else if(playerDirection == 3) playerMoveRight = false;
-      else if(playerDirection == 4) playerMoveLeft = false;
-    }
-    else playerMoveRight = false;
+        if(playerDirection == 1) playerMoveUp = false;
+        else if(playerDirection == 2) playerMoveDown = false;
+        else if(playerDirection == 3) playerMoveRight = false;
+        else if(playerDirection == 4) playerMoveLeft = false;
+      }
+      else playerMoveRight = false;
     }
     else if(key == GLFW_KEY_LEFT) {
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 1) playerMoveUp = false;
-      else if(playerDirection == 2) playerMoveDown = false;
-      else if(playerDirection == 3) playerMoveRight = false;
-      else if(playerDirection == 4) playerMoveLeft = false;
-    }
-    else playerMoveLeft = false;
+        if(playerDirection == 1) playerMoveUp = false;
+        else if(playerDirection == 2) playerMoveDown = false;
+        else if(playerDirection == 3) playerMoveRight = false;
+        else if(playerDirection == 4) playerMoveLeft = false;
+      }
+      else playerMoveLeft = false;
     }
     else if(key == GLFW_KEY_F && speed<7) speed += 1;
     else if(key == GLFW_KEY_S && speed>0) speed -= 1;
-   
+
   }
   else if (action == GLFW_PRESS) {
-     switch (key) {
+    switch (key) {
       case GLFW_KEY_ESCAPE:
         quit(window);
         break;
@@ -410,40 +410,40 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
       currentView = (currentView + 1) % numViews;
     }
     if(playerFall or playerJumpUp or playerJumpDown or playerJumpRight or playerJumpLeft or playerWin) return;
-     if(key == GLFW_KEY_UP && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
+    if(key == GLFW_KEY_UP && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ;
-       if(currentView == 2 or currentView == 3) {
+      if(currentView == 2 or currentView == 3) {
         if(playerDirection == 1) playerJumpUp = true;
-      else if(playerDirection == 3) playerJumpRight = true;
-      else if(playerDirection == 2) playerJumpDown = true;
-      else if(playerDirection == 4) playerJumpLeft = true;
-    }
-    else playerJumpUp = true, playerDirection = 1;
+        else if(playerDirection == 3) playerJumpRight = true;
+        else if(playerDirection == 2) playerJumpDown = true;
+        else if(playerDirection == 4) playerJumpLeft = true;
+      }
+      else playerJumpUp = true, playerDirection = 1;
     }
     else if(key == GLFW_KEY_DOWN && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ;     
-       if(currentView == 2 or currentView == 3) {
+      if(currentView == 2 or currentView == 3) {
 
-      if(playerDirection == 1) playerJumpDown = true, playerDirection = 2;
-      else if(playerDirection == 3) playerJumpLeft = true, playerDirection = 4;
-      else if(playerDirection == 4) playerJumpRight = true, playerDirection = 3;
-      else if(playerDirection == 2) playerJumpUp = true, playerDirection = 1;
-    }
-    else playerJumpDown = true, playerDirection = 2;
+        if(playerDirection == 1) playerJumpDown = true, playerDirection = 2;
+        else if(playerDirection == 3) playerJumpLeft = true, playerDirection = 4;
+        else if(playerDirection == 4) playerJumpRight = true, playerDirection = 3;
+        else if(playerDirection == 2) playerJumpUp = true, playerDirection = 1;
+      }
+      else playerJumpDown = true, playerDirection = 2;
     }
     else if(key == GLFW_KEY_RIGHT && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
       prevPlayerX = playerX;
       prevPlayerZ = playerZ; 
-       if(currentView == 2 or currentView == 3) {
+      if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 3) playerJumpDown = true, playerDirection = 2;
-      else if(playerDirection == 1) playerJumpRight = true, playerDirection = 3;
-      else if(playerDirection == 4) playerJumpUp = true, playerDirection = 1;
-      else if(playerDirection == 2) playerJumpLeft = true, playerDirection = 4;    
-    }
-    else playerJumpRight = true, playerDirection = 3;
+        if(playerDirection == 3) playerJumpDown = true, playerDirection = 2;
+        else if(playerDirection == 1) playerJumpRight = true, playerDirection = 3;
+        else if(playerDirection == 4) playerJumpUp = true, playerDirection = 1;
+        else if(playerDirection == 2) playerJumpLeft = true, playerDirection = 4;    
+      }
+      else playerJumpRight = true, playerDirection = 3;
 
     }
     else if(key == GLFW_KEY_LEFT && glfwGetKey(window, GLFW_KEY_SPACE) && !playerFall && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) {
@@ -451,53 +451,53 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
       prevPlayerZ = playerZ; 
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 1) playerJumpLeft = true, playerDirection = 4;
-      else if(playerDirection == 2) playerJumpRight = true, playerDirection = 3;
-      else if(playerDirection == 3) playerJumpUp = true, playerDirection = 1;
-      else if(playerDirection == 4) playerJumpDown = true, playerDirection = 2;    
-    }
-    else playerJumpLeft = true, playerDirection = 4;
+        if(playerDirection == 1) playerJumpLeft = true, playerDirection = 4;
+        else if(playerDirection == 2) playerJumpRight = true, playerDirection = 3;
+        else if(playerDirection == 3) playerJumpUp = true, playerDirection = 1;
+        else if(playerDirection == 4) playerJumpDown = true, playerDirection = 2;    
+      }
+      else playerJumpLeft = true, playerDirection = 4;
     }
     else if(key == GLFW_KEY_UP) {
       if(currentView == 2 or currentView == 3) {
         if(playerDirection == 1) playerMoveUp = true;
-      else if(playerDirection == 3) playerMoveRight = true;
-      else if(playerDirection == 2) playerMoveDown = true;
-      else if(playerDirection == 4) playerMoveLeft = true;
-    }
-    else playerMoveUp = true, playerDirection = 1;
+        else if(playerDirection == 3) playerMoveRight = true;
+        else if(playerDirection == 2) playerMoveDown = true;
+        else if(playerDirection == 4) playerMoveLeft = true;
+      }
+      else playerMoveUp = true, playerDirection = 1;
     }
     else if(key == GLFW_KEY_DOWN) {
       if(currentView == 2 or currentView == 3) {
 
-      if(playerDirection == 1) playerMoveDown = true, playerDirection = 2;
-      else if(playerDirection == 3) playerMoveLeft = true, playerDirection = 4;
-      else if(playerDirection == 4) playerMoveRight = true, playerDirection = 3;
-      else if(playerDirection == 2) playerMoveUp = true, playerDirection = 1;
-    }
-    else playerMoveDown = true, playerDirection = 2;
+        if(playerDirection == 1) playerMoveDown = true, playerDirection = 2;
+        else if(playerDirection == 3) playerMoveLeft = true, playerDirection = 4;
+        else if(playerDirection == 4) playerMoveRight = true, playerDirection = 3;
+        else if(playerDirection == 2) playerMoveUp = true, playerDirection = 1;
+      }
+      else playerMoveDown = true, playerDirection = 2;
 
     }
     else if(key == GLFW_KEY_RIGHT) {
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 3) playerMoveDown = true, playerDirection = 2;
-      else if(playerDirection == 1) playerMoveRight = true, playerDirection = 3;
-      else if(playerDirection == 4) playerMoveUp = true, playerDirection = 1;
-      else if(playerDirection == 2) playerMoveLeft = true, playerDirection = 4;    
-    }
-    else playerMoveRight = true, playerDirection = 3;
+        if(playerDirection == 3) playerMoveDown = true, playerDirection = 2;
+        else if(playerDirection == 1) playerMoveRight = true, playerDirection = 3;
+        else if(playerDirection == 4) playerMoveUp = true, playerDirection = 1;
+        else if(playerDirection == 2) playerMoveLeft = true, playerDirection = 4;    
+      }
+      else playerMoveRight = true, playerDirection = 3;
 
     }
     else if(key == GLFW_KEY_LEFT) {
       if(currentView == 2 or currentView == 3) {
 
-       if(playerDirection == 1) playerMoveLeft = true, playerDirection = 4;
-      else if(playerDirection == 2) playerMoveRight = true, playerDirection = 3;
-      else if(playerDirection == 3) playerMoveUp = true, playerDirection = 1;
-      else if(playerDirection == 4) playerMoveDown = true, playerDirection = 2;    
-    }
-    else playerMoveLeft = true, playerDirection = 4;
+        if(playerDirection == 1) playerMoveLeft = true, playerDirection = 4;
+        else if(playerDirection == 2) playerMoveRight = true, playerDirection = 3;
+        else if(playerDirection == 3) playerMoveUp = true, playerDirection = 1;
+        else if(playerDirection == 4) playerMoveDown = true, playerDirection = 2;    
+      }
+      else playerMoveLeft = true, playerDirection = 4;
 
     }   
   }
@@ -522,7 +522,7 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
   switch (button) {
     case GLFW_MOUSE_BUTTON_LEFT:
       if (action == GLFW_PRESS) {
-                glfwGetCursorPos(window, &xpos, &ypos);
+        glfwGetCursorPos(window, &xpos, &ypos);
         prevXpos = xpos;
         prevYpos = ypos;
       }
@@ -534,11 +534,11 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
         if(xpos > prevXpos) {
           viewPtr[currentView]--;
           if(viewPtr[currentView] < 0) viewPtr[currentView] = numSubViews[currentView] - 1;
-         
+
         }
         else if(xpos < prevXpos) {
-      viewPtr[currentView] = (viewPtr[currentView] + 1) % numSubViews[currentView]; 
-  
+          viewPtr[currentView] = (viewPtr[currentView] + 1) % numSubViews[currentView]; 
+
         }
 
       }
@@ -710,7 +710,7 @@ void createShapes() {
     -l, b, h,
     l,-b, h
   };
-    l = 0.2;
+  l = 0.2;
   b = 0.9;
   h = 0.2;
   static const GLfloat vertex_buffer_data_limbs [] = {
@@ -888,7 +888,7 @@ void createShapes() {
       color_buffer_data5[i+2] = 102.0/255.0;
 
       }*/
-      l = 0.5, b = 1, h = 0.5;
+  l = 0.5, b = 1, h = 0.5;
   static const GLfloat vertex_buffer_data_player [] = {
     -l,-b,-h, // triangle 1 : begin
     -l,-b, h,
@@ -930,19 +930,19 @@ void createShapes() {
 
   static GLfloat color_buffer_data_player[36*3];
   for(int i=0; i<36*3; i+=3) {
-    color_buffer_data_player[i] = 0;
-        color_buffer_data_player[i+1] = 0;
-    color_buffer_data_player[i+2] = 0;
-}
-  
-    static GLfloat color_buffer_data_limbs[36*3];
+    color_buffer_data_player[i] = 0.2;
+    color_buffer_data_player[i+1] = 0.2;
+    color_buffer_data_player[i+2] = 0.2;
+  }
+
+  static GLfloat color_buffer_data_limbs[36*3];
   for(int i=0; i<36*3; i+=3) {
     color_buffer_data_limbs[i] = 1;
     color_buffer_data_limbs[i+1] =0;
     color_buffer_data_limbs[i+2] = 0;
 
   }
-    static GLfloat color_buffer_data_temp[36*3];
+  static GLfloat color_buffer_data_temp[36*3];
   for(int i=0; i<36*3; i+=3) {
     color_buffer_data_temp[i] = 0;
     color_buffer_data_temp[i+1] =0;
@@ -989,9 +989,9 @@ void createRectangle ()
     -18, 18,0, // vertex 4
     -18,-18,0  // vertex 1
   };
-  
 
-   static const GLfloat vertex_buffer_data4 [] = {
+
+  static const GLfloat vertex_buffer_data4 [] = {
     -1,-1,0, // vertex 1
     1,-1,0, // vertex 2
     1, 1,0, // vertex 3
@@ -1002,65 +1002,65 @@ void createRectangle ()
   };
   float  h=0.25, w=0.5;
   GLfloat vertex_buffer_data_speedy [] = {
-        -w/2,-h/2,0, // vertex 1
-        w/2,-h/2,0, // vertex 2
-        w/2, h/2,0, // vertex 3
+    -w/2,-h/2,0, // vertex 1
+    w/2,-h/2,0, // vertex 2
+    w/2, h/2,0, // vertex 3
 
 
-        -w/2,-h/2,0, // vertex 1
-        w/2, h/2,0, // vertex 3
-        -w/2, h/2,0 // vertex 4
-      };
-      w = 8, h = 8;
+    -w/2,-h/2,0, // vertex 1
+    w/2, h/2,0, // vertex 3
+    -w/2, h/2,0 // vertex 4
+  };
+  w = 8, h = 8;
 
-      GLfloat vertex_buffer_data5 [] = {
-         -w/2,-h/2,0, // vertex 1
-        w/2,-h/2,0, // vertex 2
-        w/2, h/2,0, // vertex 3
-
-
-      
-        w/2, h/2,0, // vertex 3
-        -w/2, h/2,0, // vertex 4
-          -w/2,-h/2,0 // vertex 1
-      };
-
-          w = 14, h = 4;
-
-      GLfloat vertex_buffer_data6 [] = {
-         -w/2,-h/2,0, // vertex 1
-        w/2,-h/2,0, // vertex 2
-        w/2, h/2,0, // vertex 3
+  GLfloat vertex_buffer_data5 [] = {
+    -w/2,-h/2,0, // vertex 1
+    w/2,-h/2,0, // vertex 2
+    w/2, h/2,0, // vertex 3
 
 
-      
-        w/2, h/2,0, // vertex 3
-        -w/2, h/2,0, // vertex 4
-          -w/2,-h/2,0 // vertex 1
-      };
 
-      GLfloat color_buffer_data_speedy [] = {
-        1,0,0, // color 1
-        1,0,0, // color 2
-        1,0,0, // color 3
+    w/2, h/2,0, // vertex 3
+    -w/2, h/2,0, // vertex 4
+    -w/2,-h/2,0 // vertex 1
+  };
+
+  w = 14, h = 4;
+
+  GLfloat vertex_buffer_data6 [] = {
+    -w/2,-h/2,0, // vertex 1
+    w/2,-h/2,0, // vertex 2
+    w/2, h/2,0, // vertex 3
 
 
-        1,0,0,  // color 1
-        1,0,0, // color 3
-        1,0,0, // color 4
-      };
 
-      GLfloat color_buffer_data_speedy_null [] = {
-       1, 1, 1, // color 1
-       1, 1, 1 ,// color 1
-        1, 1, 1 ,// color 1
-         1, 1, 1 ,// color 1
-          1, 1, 1 ,// color 1
-           1, 1, 1 // color 1
-      };
+    w/2, h/2,0, // vertex 3
+    -w/2, h/2,0, // vertex 4
+    -w/2,-h/2,0 // vertex 1
+  };
 
-      speedy[0] = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data_speedy, color_buffer_data_speedy, GL_FILL);
-      speedy[1] = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data_speedy, color_buffer_data_speedy_null, GL_FILL);
+  GLfloat color_buffer_data_speedy [] = {
+    1,0,0, // color 1
+    1,0,0, // color 2
+    1,0,0, // color 3
+
+
+    1,0,0,  // color 1
+    1,0,0, // color 3
+    1,0,0, // color 4
+  };
+
+  GLfloat color_buffer_data_speedy_null [] = {
+    1, 1, 1, // color 1
+    1, 1, 1 ,// color 1
+    1, 1, 1 ,// color 1
+    1, 1, 1 ,// color 1
+    1, 1, 1 ,// color 1
+    1, 1, 1 // color 1
+  };
+
+  speedy[0] = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data_speedy, color_buffer_data_speedy, GL_FILL);
+  speedy[1] = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data_speedy, color_buffer_data_speedy_null, GL_FILL);
   // create3DObject creates and returns a handle to a VAO that can be used later
   for(int i = 0; i<16; i++)
     timer[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data, texture_buffer_data, textureID[i], GL_FILL);
@@ -1070,7 +1070,7 @@ void createRectangle ()
     stars[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[16+i], GL_FILL);
   for(int i=0; i<22; i++) 
     hearts[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data, texture_buffer_data, textureID[19+i], GL_FILL);
-   for(int i = 0; i<25; i++) {
+  for(int i = 0; i<25; i++) {
     water[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data3, texture_buffer_data, textureID[41+i], GL_FILL);
   }
   for(int i=0; i<120; i++)
@@ -1092,7 +1092,7 @@ void createRectangle ()
   star = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[69], GL_FILL);
   heart = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[70], GL_FILL);
 
-   
+
 }
 
 void createSphere(int slices, int stacks) {
@@ -1216,7 +1216,7 @@ void initGL (GLFWwindow* window, int width, int height)
   textureID[38] = createTexture("images/lives/frame-020.jpg");
   textureID[39] = createTexture("images/lives/frame-021.jpg");
   textureID[40] = createTexture("images/lives/frame-022.jpg");
-  
+
   textureID[41] = createTexture("images/water/frame-001.jpg");
   textureID[42] = createTexture("images/water/frame-002.jpg");
   textureID[43] = createTexture("images/water/frame-003.jpg");
@@ -1252,11 +1252,11 @@ void initGL (GLFWwindow* window, int width, int height)
   textureID[71] = createTexture("images/throne.jpg");
   char ibuf[100];
   for(int i = 0; i<120; i++) {
-  snprintf(ibuf, sizeof(ibuf), "images/soldier/o_a71eebd8de89d627-%d.jpg", i);
+    snprintf(ibuf, sizeof(ibuf), "images/soldier/o_a71eebd8de89d627-%d.jpg", i);
     textureID[72+i] = createTexture(ibuf);
   }
   for(int i = 0; i<12; i++) {
-  snprintf(ibuf, sizeof(ibuf), "images/dragon/o_b90b52b369699b6e-%d.jpg", i);
+    snprintf(ibuf, sizeof(ibuf), "images/dragon/o_b90b52b369699b6e-%d.jpg", i);
     textureID[192+i] = createTexture(ibuf);
   }
 
@@ -1339,28 +1339,28 @@ void initGL (GLFWwindow* window, int width, int height)
 
 void drawSpeedy() {
   float h = 0.25, w = 0.5, x = -10;
-      glUseProgram (programID);
-      float tempx=0;
-      for(float i=1;i<=7;i++){
-        tempx+=w;
-        glm::mat4 translateRectangle;
-        glm::mat4 VP = Matrices.projection * Matrices.view;
-        // Send our transformation to the currently bound shader, in the "MVP" uniform
-        // For each model you render, since the MVP will be different (at least the M part)
-        //  Don't change unless you are sure!!
-        glm::mat4 MVP;  // MVP = Projection * View * Model
-        // Load identity to model matrix
-        Matrices.model = glm::mat4(1.0f);
-        translateRectangle = glm::translate (glm::vec3(tempx+x, 5, 0));        // glTranslatef
-        Matrices.model *= (translateRectangle );
-        MVP = VP * Matrices.model;
-        glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        // draw3DObject draws the VAO given to it using current MVP matrix
-        if (i<=speed)
-          draw3DObject(speedy[0]);
-        else
-          draw3DObject(speedy[1]);
-      }
+  glUseProgram (programID);
+  float tempx=0;
+  for(float i=1;i<=7;i++){
+    tempx+=w;
+    glm::mat4 translateRectangle;
+    glm::mat4 VP = Matrices.projection * Matrices.view;
+    // Send our transformation to the currently bound shader, in the "MVP" uniform
+    // For each model you render, since the MVP will be different (at least the M part)
+    //  Don't change unless you are sure!!
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+    // Load identity to model matrix
+    Matrices.model = glm::mat4(1.0f);
+    translateRectangle = glm::translate (glm::vec3(tempx+x, 5, 0));        // glTranslatef
+    Matrices.model *= (translateRectangle );
+    MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    // draw3DObject draws the VAO given to it using current MVP matrix
+    if (i<=speed)
+      draw3DObject(speedy[0]);
+    else
+      draw3DObject(speedy[1]);
+  }
 }
 
 void drawTimer() {
@@ -1397,7 +1397,7 @@ void drawBackground() {
   }
 
   frames++;
-glUseProgram (textureProgramID);
+  glUseProgram (textureProgramID);
   glm::mat4 translateRectangle;
   glm::mat4 VP = Matrices.projection * Matrices.view;
   glm::mat4 MVP;  // MVP = Projection * View * Model
@@ -1439,53 +1439,53 @@ void drawSoldier() {
   if(currentView == 0 and (viewPtr[currentView] == 0 or viewPtr[currentView] == 1 or viewPtr[currentView] == 2)) {
 
 
-  static int i = 0, frames = 0;
-  if(frames == 2) frames = 0;
-  if(frames == 0) {
-    i++;
-    if(i==120) i = 0;
+    static int i = 0, frames = 0;
+    if(frames == 2) frames = 0;
+    if(frames == 0) {
+      i++;
+      if(i==120) i = 0;
+    }
+    frames++;
+    glUseProgram (textureProgramID);
+    glm::mat4 translateRectangle, rotateRectangle;
+    glm::mat4 VP = Matrices.projection * Matrices.view;
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+    Matrices.model = glm::mat4(1.0f);
+    translateRectangle = glm::translate (glm::vec3(13,4,18));    
+    rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
+    Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
+    MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+    draw3DTexturedObject(soldier[i]);
   }
-  frames++;
-  glUseProgram (textureProgramID);
-  glm::mat4 translateRectangle, rotateRectangle;
-  glm::mat4 VP = Matrices.projection * Matrices.view;
-  glm::mat4 MVP;  // MVP = Projection * View * Model
-  Matrices.model = glm::mat4(1.0f);
-  translateRectangle = glm::translate (glm::vec3(13,4,18));    
-  rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
-  Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
-  MVP = VP * Matrices.model;
-  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
-  draw3DTexturedObject(soldier[i]);
-}
 
 }
 
 void drawDragon() {
   if(currentView == 0 and (viewPtr[currentView] == 0 or viewPtr[currentView] == 1 or viewPtr[currentView] == 7)) {
 
-  static int i = 0, frames = 0;
-  if(frames == 6) frames = 0;
-  if(frames == 0) {
-    i++;
-    if(i==12) i = 0;
-  }
-  frames++;
-  glUseProgram (textureProgramID);
-  glm::mat4 translateRectangle, rotateRectangle;
-  glm::mat4 VP = Matrices.projection * Matrices.view;
-  glm::mat4 MVP;  // MVP = Projection * View * Model
-  Matrices.model = glm::mat4(1.0f);
-  translateRectangle = glm::translate (glm::vec3(11,6,10));    
-  rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
-  Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
-  MVP = VP * Matrices.model;
-  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
-  draw3DTexturedObject(dragon[i]);
+    static int i = 0, frames = 0;
+    if(frames == 6) frames = 0;
+    if(frames == 0) {
+      i++;
+      if(i==12) i = 0;
+    }
+    frames++;
+    glUseProgram (textureProgramID);
+    glm::mat4 translateRectangle, rotateRectangle;
+    glm::mat4 VP = Matrices.projection * Matrices.view;
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+    Matrices.model = glm::mat4(1.0f);
+    translateRectangle = glm::translate (glm::vec3(11,6,10));    
+    rotateRectangle = glm::rotate((float)(90*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
+    Matrices.model *= (translateRectangle * rotateRectangle);    // glTranslatef
+    MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+    draw3DTexturedObject(dragon[i]);
 
-}
+  }
 }
 
 void drawAnimate(VAO *object) {
@@ -1641,39 +1641,39 @@ void draw ()
   // use the loaded shader program
   // Don't change unless you know what you are doing
   glUseProgram (programID);
-      viewsX[3][0] = playerCoordX, viewsZ[3][0] = playerCoordZ, viewsY[3][0] = playerCoordY + 4;
-      viewsY[2][0] = playerCoordY + 10;
+  viewsX[3][0] = playerCoordX, viewsZ[3][0] = playerCoordZ, viewsY[3][0] = playerCoordY + 4;
+  viewsY[2][0] = playerCoordY + 10;
 
 
-    if(playerDirection == 1) {
-      viewsX[2][0] = playerCoordX - 4, viewsZ[2][0] = playerCoordZ;
-      alpha = 2;
-    }
-    else if(playerDirection == 2) {
-      viewsX[2][0] = playerCoordX + 4, viewsZ[2][0] = playerCoordZ;
-      alpha = -2;
-    }
+  if(playerDirection == 1) {
+    viewsX[2][0] = playerCoordX - 4, viewsZ[2][0] = playerCoordZ;
+    alpha = 2;
+  }
+  else if(playerDirection == 2) {
+    viewsX[2][0] = playerCoordX + 4, viewsZ[2][0] = playerCoordZ;
+    alpha = -2;
+  }
 
-    if(playerDirection == 3) {
-      viewsZ[2][0] = playerCoordZ - 4, viewsX[2][0] = playerCoordX;
-      beta = 2;
-    }
-    if(playerDirection == 4) {
-      viewsZ[2][0] = playerCoordZ + 4, viewsX[2][0] = playerCoordX;
-      beta = -2;
-    }
-    float eyeX, eyeY, eyeZ;
-    eyeX = viewsX[currentView][viewPtr[currentView]];
-    eyeY = viewsY[currentView][viewPtr[currentView]];
-    eyeZ = viewsZ[currentView][viewPtr[currentView]];
-    if(currentView == 0 or currentView == 1) eyeY += zoom_flag;
-    else if(currentView == 2 or currentView == 3 and zoom_flag < 4 and zoom_flag >-4) {
-      if(playerDirection == 1) eyeX -= zoom_flag;
-      if(playerDirection == 2) eyeX += zoom_flag;
-      if(playerDirection == 3) eyeZ -= zoom_flag;
-      if(playerDirection == 4) eyeZ += zoom_flag;
+  if(playerDirection == 3) {
+    viewsZ[2][0] = playerCoordZ - 4, viewsX[2][0] = playerCoordX;
+    beta = 2;
+  }
+  if(playerDirection == 4) {
+    viewsZ[2][0] = playerCoordZ + 4, viewsX[2][0] = playerCoordX;
+    beta = -2;
+  }
+  float eyeX, eyeY, eyeZ;
+  eyeX = viewsX[currentView][viewPtr[currentView]];
+  eyeY = viewsY[currentView][viewPtr[currentView]];
+  eyeZ = viewsZ[currentView][viewPtr[currentView]];
+  if(currentView == 0 or currentView == 1) eyeY += zoom_flag;
+  else if(currentView == 2 or currentView == 3 and zoom_flag < 4 and zoom_flag >-4) {
+    if(playerDirection == 1) eyeX -= zoom_flag;
+    if(playerDirection == 2) eyeX += zoom_flag;
+    if(playerDirection == 3) eyeZ -= zoom_flag;
+    if(playerDirection == 4) eyeZ += zoom_flag;
 
-    }
+  }
 
   // Eye - Location of camera. Don't change unless you are sure!!
   //glm::vec3 eye ( 5*cos(camera_rotation_angle*M_PI/180.0f), 0, 5*sin(camera_rotation_angle*M_PI/180.0f) );
@@ -1681,8 +1681,8 @@ void draw ()
 
   // Target - Where is the camera looking at.  Don't change unless you are sure!!
   glm::vec3 target (0, 0, 0);
-    glm::vec3 target2 (playerCoordX, 0, playerCoordZ);
-    glm::vec3 target3 (playerCoordX + alpha, playerCoordY + 1.8, playerCoordZ + beta);
+  glm::vec3 target2 (playerCoordX, 0, playerCoordZ);
+  glm::vec3 target3 (playerCoordX + alpha, playerCoordY + 1.8, playerCoordZ + beta);
 
 
 
@@ -1693,12 +1693,12 @@ void draw ()
   // Compute Camera matrix (view)
   if(currentView == 2) 
 
-  Matrices.view = glm::lookAt( eye, target2, up ); // Rotating Camera for 3D
-else if(currentView == 3) 
-  Matrices.view = glm::lookAt( eye, target3, up ); // Rotating Camera for 3D
+    Matrices.view = glm::lookAt( eye, target2, up ); // Rotating Camera for 3D
+  else if(currentView == 3) 
+    Matrices.view = glm::lookAt( eye, target3, up ); // Rotating Camera for 3D
 
-else
-  Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
+  else
+    Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
 
   //  Don't change unless you are sure!!
 
@@ -1714,43 +1714,43 @@ else
   //  Don't change unless you are sure!!
 
   drawBackground();
-     glm::mat4 translateCube;
-        glm::mat4 rotateCube;
+  glm::mat4 translateCube;
+  glm::mat4 rotateCube;
 
-        glm::mat4 CubeTransform;
-        glm::mat4 MVP;
-        glm::mat4 translateRectangle;
-         glm::mat4 rotateRectangle;
-  
-
-
-    CubeTransform = translateCube * rotateCube;
-
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
-
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(coin);
-
-         for(int i = 0; i<12; i++) {
-          Matrices.model = glm::mat4(1.0f);
-  if(currentView == 0 && viewPtr[0] <5) translateRectangle = glm::translate (glm::vec3(-15 + 2*i, min(5.0, 4.8 + i*0.1), -10));
-  
-  Matrices.model *= (translateRectangle);
-  MVP = VP * Matrices.model;
-  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
-  draw3DTexturedObject(tree);
-}
+  glm::mat4 CubeTransform;
+  glm::mat4 MVP;
+  glm::mat4 translateRectangle;
+  glm::mat4 rotateRectangle;
 
 
-drawSoldier();
-drawDragon();
-glUseProgram (programID);
+
+  CubeTransform = translateCube * rotateCube;
+
+  Matrices.model *= CubeTransform;
+  MVP = VP * Matrices.model; // MVP = p * V * M
+
+  //  Don't change unless you are sure!!
+  // Copy MVP to normal shaders
+  glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+  // draw3DObject draws the VAO given to it using current MVP matrix
+  draw3DObject(coin);
+
+  for(int i = 0; i<12; i++) {
+    Matrices.model = glm::mat4(1.0f);
+    if(currentView == 0 && viewPtr[0] <5) translateRectangle = glm::translate (glm::vec3(-15 + 2*i, min(5.0, 4.8 + i*0.1), -10));
+
+    Matrices.model *= (translateRectangle);
+    MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+    draw3DTexturedObject(tree);
+  }
+
+
+  drawSoldier();
+  drawDragon();
+  glUseProgram (programID);
   for(int i=0; i<10; i++) {
     for(int j = 0; j<10; j++) {
       Matrices.model = glm::mat4(1.0f);
@@ -1773,39 +1773,73 @@ glUseProgram (programID);
       if(isPresent[i][j]) {
         draw3DObject(cube);
 
-      glUseProgram (textureProgramID);
-  translateRectangle;
-  VP = Matrices.projection * Matrices.view;
-  MVP;  // MVP = Projection * View * Model
-  Matrices.model = glm::mat4(1.0f);
-  if(!isMoving[i][j]) translateRectangle = glm::translate (glm::vec3(i*2+shiftX, 3.05, j*2+shiftZ));
-  else translateRectangle = glm::translate (glm::vec3(i*2+shiftX, blockCoordY+3.05, j*2+shiftZ));
-  rotateRectangle = glm::rotate((float)(-90*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
-  Matrices.model *= (translateRectangle * rotateRectangle);
-  MVP = VP * Matrices.model;
-  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0); 
-
-  if(lightOn == true) {
-    if(playerX >= i-1 && playerX<=i+1 && playerZ >= j-1 && playerZ <= j+1) {
-    if((i+j )% 2) 
-  draw3DTexturedObject(grass);
-else
-  draw3DTexturedObject(wood);
-}
-    else draw3DTexturedObject(square[(i+j)%2]);
-  }
-  else draw3DTexturedObject(square[(i+j)%2]);
-
- 
-}
-  glUseProgram(programID);
-      if((playerX == i && playerZ == j) || playerZ>9 || playerX>9 || playerX<0 || playerZ<0) {
-         
-      
-      
+        glUseProgram (textureProgramID);
+        translateRectangle;
+        VP = Matrices.projection * Matrices.view;
+        MVP;  // MVP = Projection * View * Model
         Matrices.model = glm::mat4(1.0f);
-        translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*2+1.5, playerCoordZ)); // glTranslatef
+        if(!isMoving[i][j]) translateRectangle = glm::translate (glm::vec3(i*2+shiftX, 3.05, j*2+shiftZ));
+        else translateRectangle = glm::translate (glm::vec3(i*2+shiftX, blockCoordY+3.05, j*2+shiftZ));
+        rotateRectangle = glm::rotate((float)(-90*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+        Matrices.model *= (translateRectangle * rotateRectangle);
+        MVP = VP * Matrices.model;
+        glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0); 
+
+        if(lightOn == true) {
+          if(playerDirection == 1) {
+            if(i-playerX<=2 && i>=playerX && playerZ >= j-1 && playerZ <= j+1) {
+              if((i+j )% 2) 
+                draw3DTexturedObject(grass);
+              else
+                draw3DTexturedObject(wood);
+            }
+            else draw3DTexturedObject(square[(i+j)%2]);
+          }
+          else if(playerDirection == 2) {
+            if(i-playerX>=-2 && i<=playerX && playerZ >= j-1 && playerZ <= j+1) {
+              if((i+j )% 2) 
+                draw3DTexturedObject(grass);
+              else
+                draw3DTexturedObject(wood);
+            }
+            else draw3DTexturedObject(square[(i+j)%2]);
+
+
+          }
+          else if(playerDirection == 3) {
+             if(j-playerZ<=2 && j>=playerZ && playerX >= i-1 && playerX <= i+1) {
+              if((i+j )% 2) 
+                draw3DTexturedObject(grass);
+              else
+                draw3DTexturedObject(wood);
+            }
+            else draw3DTexturedObject(square[(i+j)%2]);
+
+          }
+          else{
+             if(j-playerZ>=-2 && j<=playerZ && playerX >= i-1 && playerX <= i+1) {
+              if((i+j )% 2) 
+                draw3DTexturedObject(grass);
+              else
+                draw3DTexturedObject(wood);
+            }
+            else draw3DTexturedObject(square[(i+j)%2]);
+          }
+        }
+         
+          else draw3DTexturedObject(square[(i+j)%2]);
+
+
+      }
+
+      glUseProgram(programID);
+      if((playerX == i && playerZ == j) || playerZ>9 || playerX>9 || playerX<0 || playerZ<0) {
+
+
+
+        Matrices.model = glm::mat4(1.0f);
+        translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*3+1.5, playerCoordZ)); // glTranslatef
         rotateCube = glm::rotate((float)(sphereRotation*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
         glm::mat4 rotateCube2 = glm::rotate((float)(sphereRotation*M_PI/180.0f), glm::vec3(0,1,0)); // glTranslatef
 
@@ -1822,223 +1856,223 @@ else
         if(!playerAnimate) {
           draw3DObject(player); 
           Matrices.model = glm::mat4(1.0f);
-    translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3, playerCoordZ)); // glTranslatef
-   
+          translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3+playerWin*3, playerCoordZ)); // glTranslatef
 
-    CubeTransform = translateCube;
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+          CubeTransform = translateCube;
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(head);
-        Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY, playerCoordZ)); // glTranslatef
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-     else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ-0.5)); // glTranslatef
-    rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(head);
+          Matrices.model = glm::mat4(1.0f);
+          if(playerDirection == 3 or playerDirection == 4) {
+            translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
 
-   }
-   
+            rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+          }
+          else {
+            translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*3, playerCoordZ-0.5)); // glTranslatef
+            rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    CubeTransform = translateCube * rotateCube;
+          }
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+          CubeTransform = translateCube * rotateCube;
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-      Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY, playerCoordZ)); // glTranslatef
-    rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-   else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ+0.5)); // glTranslatef
-    rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
 
-   }
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    CubeTransform = translateCube * rotateCube;
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(limbs);
+          Matrices.model = glm::mat4(1.0f);
+          if(playerDirection == 3 or playerDirection == 4) {
+            translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
+            rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+          }
+          else {
+            translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*3, playerCoordZ+0.5)); // glTranslatef
+            rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+          }
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+          CubeTransform = translateCube * rotateCube;
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-        Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2, playerCoordZ)); // glTranslatef
-   
-    rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-   else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ+1)); // glTranslatef
-    rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
 
-   }
-    CubeTransform = translateCube * rotateCube;
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(limbs);
+          Matrices.model = glm::mat4(1.0f);
+          if(playerDirection == 3 or playerDirection == 4) {
+            translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2+playerWin*3, playerCoordZ)); // glTranslatef
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+          }
+          else {
+            translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2+playerWin*3, playerCoordZ+1)); // glTranslatef
+            rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-         Matrices.model = glm::mat4(1.0f);
-   if(playerDirection == 3 or playerDirection == 4)  {
-   translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2, playerCoordZ)); // glTranslatef
-   
-    rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-     else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ-1)); // glTranslatef
-    rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+          }
+          CubeTransform = translateCube * rotateCube;
 
-   }
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
 
-    CubeTransform = translateCube * rotateCube;
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(limbs);
+          Matrices.model = glm::mat4(1.0f);
+          if(playerDirection == 3 or playerDirection == 4)  {
+            translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2+playerWin*3, playerCoordZ)); // glTranslatef
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+          }
+          else {
+            translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2+playerWin*3, playerCoordZ-1)); // glTranslatef
+            rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-  }
+          }
+
+          CubeTransform = translateCube * rotateCube;
+
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
+
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(limbs);
+        }
 
         else {
           frames++;
           if(frames == 10) {
             draw3DObject(player);
             Matrices.model = glm::mat4(1.0f);
-    translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3, playerCoordZ)); // glTranslatef
-   
+            translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3+playerWin*3, playerCoordZ)); // glTranslatef
 
-    CubeTransform = translateCube;
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+            CubeTransform = translateCube;
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            Matrices.model *= CubeTransform;
+            MVP = VP * Matrices.model; // MVP = p * V * M
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(head);
-        Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY, playerCoordZ)); // glTranslatef
+            //  Don't change unless you are sure!!
+            // Copy MVP to normal shaders
+            glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-     else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ-0.5)); // glTranslatef
-    rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+            // draw3DObject draws the VAO given to it using current MVP matrix
+            draw3DObject(head);
+            Matrices.model = glm::mat4(1.0f);
+            if(playerDirection == 3 or playerDirection == 4) {
+              translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
 
-   }
-   
+              rotateCube = glm::rotate((float)(-20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+            }
+            else {
+              translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*3, playerCoordZ-0.5)); // glTranslatef
+              rotateCube = glm::rotate((float)(30*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    CubeTransform = translateCube * rotateCube;
+            }
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            CubeTransform = translateCube * rotateCube;
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-      Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY, playerCoordZ)); // glTranslatef
-    rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-   else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY, playerCoordZ+0.5)); // glTranslatef
-    rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+            Matrices.model *= CubeTransform;
+            MVP = VP * Matrices.model; // MVP = p * V * M
 
-   }
+            //  Don't change unless you are sure!!
+            // Copy MVP to normal shaders
+            glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    CubeTransform = translateCube * rotateCube;
+            // draw3DObject draws the VAO given to it using current MVP matrix
+            draw3DObject(limbs);
+            Matrices.model = glm::mat4(1.0f);
+            if(playerDirection == 3 or playerDirection == 4) {
+              translateCube = glm::translate (glm::vec3(playerCoordX+0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
+              rotateCube = glm::rotate((float)(20*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+            }
+            else {
+              translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+playerWin*3, playerCoordZ+0.5)); // glTranslatef
+              rotateCube = glm::rotate((float)(150*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+            }
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            CubeTransform = translateCube * rotateCube;
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-        Matrices.model = glm::mat4(1.0f);
-    if(playerDirection == 3 or playerDirection == 4) {
-    translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2, playerCoordZ)); // glTranslatef
-   
-    rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-   else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ+1)); // glTranslatef
-    rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+            Matrices.model *= CubeTransform;
+            MVP = VP * Matrices.model; // MVP = p * V * M
 
-   }
-    CubeTransform = translateCube * rotateCube;
+            //  Don't change unless you are sure!!
+            // Copy MVP to normal shaders
+            glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+            // draw3DObject draws the VAO given to it using current MVP matrix
+            draw3DObject(limbs);
+            Matrices.model = glm::mat4(1.0f);
+            if(playerDirection == 3 or playerDirection == 4) {
+              translateCube = glm::translate (glm::vec3(playerCoordX+1, playerCoordY+2+playerWin*3, playerCoordZ)); // glTranslatef
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+              rotateCube = glm::rotate((float)(50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+            }
+            else {
+              translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2+playerWin*3, playerCoordZ+1)); // glTranslatef
+              rotateCube = glm::rotate((float)(110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
-         Matrices.model = glm::mat4(1.0f);
-   if(playerDirection == 3 or playerDirection == 4)  {
-   translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2, playerCoordZ)); // glTranslatef
-   
-    rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
-  }
-     else {
-     translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2, playerCoordZ-1)); // glTranslatef
-    rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
+            }
+            CubeTransform = translateCube * rotateCube;
 
-   }
+            Matrices.model *= CubeTransform;
+            MVP = VP * Matrices.model; // MVP = p * V * M
 
-    CubeTransform = translateCube * rotateCube;
+            //  Don't change unless you are sure!!
+            // Copy MVP to normal shaders
+            glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    Matrices.model *= CubeTransform;
-    MVP = VP * Matrices.model; // MVP = p * V * M
+            // draw3DObject draws the VAO given to it using current MVP matrix
+            draw3DObject(limbs);
+            Matrices.model = glm::mat4(1.0f);
+            if(playerDirection == 3 or playerDirection == 4)  {
+              translateCube = glm::translate (glm::vec3(playerCoordX-1, playerCoordY+2+playerWin*3, playerCoordZ)); // glTranslatef
 
-    //  Don't change unless you are sure!!
-    // Copy MVP to normal shaders
-    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+              rotateCube = glm::rotate((float)(-50*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
+            }
+            else {
+              translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+2+playerWin*3, playerCoordZ-1)); // glTranslatef
+              rotateCube = glm::rotate((float)(-110*M_PI/180.0f), glm::vec3(1,0,0)); // glTranslatef
 
-    // draw3DObject draws the VAO given to it using current MVP matrix
-    draw3DObject(limbs);
+            }
+
+            CubeTransform = translateCube * rotateCube;
+
+            Matrices.model *= CubeTransform;
+            MVP = VP * Matrices.model; // MVP = p * V * M
+
+            //  Don't change unless you are sure!!
+            // Copy MVP to normal shaders
+            glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+            // draw3DObject draws the VAO given to it using current MVP matrix
+            draw3DObject(limbs);
             frames = 0;
             if(glfwGetTime() - timeStamp > 2.5) {
               playerAnimate = false;
@@ -2163,7 +2197,7 @@ int main (int argc, char** argv)
   /* set orientation */
   alListener3f(AL_POSITION, 0, 0, 1.0f);
   TEST_ERROR("listener position");
-      alListener3f(AL_VELOCITY, 0, 0, 0);
+  alListener3f(AL_VELOCITY, 0, 0, 0);
   TEST_ERROR("listener velocity");
   alListenerfv(AL_ORIENTATION, listenerOri);
   TEST_ERROR("listener orientation");
@@ -2265,7 +2299,7 @@ int main (int argc, char** argv)
     TEST_ERROR("source state get");
   }
 
-  
+
 
 
   /* exit context */
