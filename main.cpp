@@ -359,6 +359,7 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
     if(key == GLFW_KEY_7) playerHouse = 7, onMenu = false;
     if(key == GLFW_KEY_8) playerHouse = 8, onMenu = false;
     if(key == GLFW_KEY_9) playerHouse = 9, onMenu = false;
+    if(onMenu == false) boardReset();
     
     gameStart = glfwGetTime();
     
@@ -1238,6 +1239,8 @@ void createSphere(int slices, int stacks) {
   }
   eyes = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
 
+ 
+
 
 
 
@@ -1459,6 +1462,7 @@ void drawTimer() {
   if(frames == 0) {
     i++;
     if(i==16) i = 0;
+
   }
 
   frames++;
@@ -1507,6 +1511,8 @@ void drawStars() {
   if(frames == 0) {
     i++;
     if(i==3) i = 0;
+   
+
   }
   frames++;
   glUseProgram (textureProgramID);
@@ -1782,7 +1788,10 @@ float camera_rotation_angle = 90;
 /* Edit this function according to your assignment */
 void draw ()
 {
-  if(glfwGetTime() - loseTime > 5 && playerLose) playerReset();
+   obsY += obsFlag;
+    if(obsY > 5) obsFlag = -0.01;
+    else if(obsY < 4) obsFlag = 0.01;
+  if(glfwGetTime() - loseTime > 4 && playerLose) gameResetAfterLoss();
 
   static int frames = 0;
   if(onMenu == false)
@@ -2270,7 +2279,7 @@ if(onMenu == false) {
     int j=obstacles[l].second;
 
     Matrices.model = glm::mat4(1.0f);
-    translateCube = glm::translate (glm::vec3(i*2+shiftX, 4, j*2+shiftZ)); // glTranslatef
+    translateCube = glm::translate (glm::vec3(i*2+shiftX, obsY, j*2+shiftZ)); // glTranslatef
     rotateCube = glm::rotate((float)(sphereRotation*M_PI/180.0f), glm::vec3(0,0,1)); // glTranslatef
 
     glm::mat4 CubeTransform = translateCube * rotateCube;
@@ -2458,18 +2467,7 @@ int main (int argc, char** argv)
   double last_update_time = glfwGetTime(), current_time;
 
 
-for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
-  int temp = rand() % (50/level);
-  isPresent[i][j] = temp != 0;
 
-  if(i==j || i+j==9) isPresent[i][j] = 1;
-}
-for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
-  int temp = rand() % (50/level);
-
-  isMoving[i][j] = temp == 0;
-  if(i==j || i+j==9 || !isPresent[i][j]) isMoving[i][j] = 0;
-}
 
   /* Draw in loop */
   while (!glfwWindowShouldClose(window)) {

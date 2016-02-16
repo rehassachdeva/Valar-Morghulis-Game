@@ -60,6 +60,8 @@ static const GLfloat texture_buffer_data [] = {
   0,1  // TexCoord 1 - bot left
 };
 
+float obsY = 4, obsFlag = 0.01;
+
 VAO *cube, *player, *timer[16], *stars[3], *hearts[22], *background, *star, *heart, *menu, *banner, *head, *limbs, *cube2, *eyes;
 VAO *sphere, *spikes, *coin, *water[25], *square[2], *tree, *speedy[2], *throne, *soldier[120], *dragon[12], *grass, *wood, *sigil[10];
 
@@ -173,7 +175,7 @@ bool isMoving[10][10] = {
 
 void boardReset() {
    for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
-  int temp = rand() % (40/level);
+  int temp = rand() % (30/level);
   isPresent[i][j] = temp != 0;
 
   if(i==j || i+j==9) isPresent[i][j] = 1;
@@ -193,11 +195,7 @@ void gameReset() {
 
   boardReset();
  
-  if(playerLose) {
-      lives = 3;
-  points = 0;
-
-  }
+  
   playerLose = false;
   loseTime = 0;
 
@@ -215,16 +213,40 @@ void gameReset() {
 
 }
 
+void gameResetAfterLoss() {
+  boardReset();
+  
+  playerLose = false;
+  loseTime = 0;
+  points = 0;
+  level = 1;
+  lives = 3;
+
+  gameStart = glfwGetTime();
+  playerWin = false;
+  playerFall = false, playerFallOff = false; 
+  playerX = 0;
+  playerZ = 0;
+  playerCoordY = 4.2;
+  playerCoordX = shiftX;
+  playerCoordZ = shiftZ;
+  playerJumpRight = playerJumpUp = playerJumpLeft = playerJumpDown = false;
+  playerDirection = 3;
+  playerMoveDown=  playerMoveLeft = playerMoveRight = playerMoveUp = false;
+  onMenu = true;
+
+}
+
 void magicLife() {
   if(!(playerX==playerZ or playerZ+playerX == 9)) return;
-  int temp = rand() % 500;
+  int temp = rand() % 100;
   if(temp == 0) lives++;
 
 
 }
 
 void updatePos() {
-   if(glfwGetTime() - magicStamp >) {
+   if(glfwGetTime() - magicStamp > 3) {
           magicLife();
           magicStamp = glfwGetTime();
         }
@@ -274,11 +296,14 @@ void playerReset(int f = 1) {
   heartAnimate = true;
   if(lives==0) {
     level = 1;
-  boardReset();
+    points = 0;
+
 
     playerLose = true;
     if(loseTime == 0) loseTime = glfwGetTime();
     return;
+ 
+
     playerLose = false, loseTime = 0;
     lives = 3;
     points = 0;
@@ -305,8 +330,8 @@ void checkCollision() {
     coins.erase(std::remove(coins.begin(), coins.end(), make_pair(playerX, playerZ)), coins.end());
   }
   if(isPresent[playerX][playerZ] == 0 && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) playerFall = true;
-  if(isMoving[playerX][playerZ] && playerCoordY - 1 <= blockCoordY + 3) playerReset();
-  else if(isMoving[playerX][playerZ] && !playerJumpRight && !playerJumpUp && ! playerJumpLeft && !playerJumpDown) playerReset(); 
+  if(isMoving[playerX][playerZ] && playerCoordY - 1 <= blockCoordY + 3 and !playerLose) playerReset();
+  else if(isMoving[playerX][playerZ] && !playerJumpRight && !playerJumpUp && ! playerJumpLeft && !playerJumpDown and !playerLose) playerReset(); 
 }
 
 void genObstacles() {
