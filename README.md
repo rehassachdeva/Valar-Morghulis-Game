@@ -34,6 +34,8 @@
 * Each time you lose a life you are reset to the starting position
 * Timer indicates elapsed time from start of a game
 * A game carries 3 lives
+* Squares with your player's kingdom image periodically grant extra lives with some probability.
+* Unlimited levels in increasing order of difficulty (number of missing blocks, blocks moving up and down)
 * Music to support the theme of Valar Morghulis and goal of acquiring the dragon :P
 
 ####Movement Controls
