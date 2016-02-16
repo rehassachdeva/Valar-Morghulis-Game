@@ -48,7 +48,7 @@ GLuint programID, fontProgramID, textureProgramID;
 
 GLuint textureID[300];
 
-char buffer[20];
+char buffer[100];
 
 static const GLfloat texture_buffer_data [] = {
   0,1, // TexCoord 1 - bot left
@@ -60,8 +60,8 @@ static const GLfloat texture_buffer_data [] = {
   0,1  // TexCoord 1 - bot left
 };
 
-VAO *cube, *player, *timer[16], *stars[3], *hearts[22], *background, *star, *heart, *arya, *head, *limbs, *cube2;
-VAO *sphere, *spikes, *coin, *water[25], *square[2], *tree, *speedy[2], *throne, *soldier[120], *dragon[12], *grass, *wood;
+VAO *cube, *player, *timer[16], *stars[3], *hearts[22], *background, *star, *heart, *menu, *banner, *head, *limbs, *cube2, *eyes;
+VAO *sphere, *spikes, *coin, *water[25], *square[2], *tree, *speedy[2], *throne, *soldier[120], *dragon[12], *grass, *wood, *sigil[10];
 
 float eyeHeight = 10, blockCoordY = -1, playerCoordY = 4.2, playerCoordZ = -10, playerCoordX = -8;
 float playerRotation = 0, sphereRotation = 90;
@@ -69,11 +69,13 @@ float playerRotation = 0, sphereRotation = 90;
 float animateX = -10;
 float animateY = 3;
 
-bool starAnimate = false, heartAnimate = false, lightOn = false;
-
+bool starAnimate = false, heartAnimate = false, lightOn = false, onMenu = true;
+int playerHouse = 0;
 float speed = 1;
 double xpos, ypos, prevXpos, prevYpos;
 float zoom_flag = 0;
+
+time_t magicStamp = 0;
 
 float viewsX[5][10] = {
   {
@@ -125,7 +127,7 @@ time_t currentTime, timeStamp, gameStart = 0, winTime = 0, loseTime = 0;
 
 vector< pair<int, int> > obstacles;
 vector< pair<int, int> > coins;
-
+int level = 1;
 
 int playerX = 0, playerZ = 0, shiftX = -8, shiftZ = -10, frames = 0, blockMotion = 0, lives = 3, points = 0;
 int prevPlayerX = 0, prevPlayerZ = 0;
@@ -169,11 +171,36 @@ bool isMoving[10][10] = {
   0, 0, 0, 0, 0, 0, 1, 0, 0, 0
 };
 
+void boardReset() {
+   for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
+  int temp = rand() % (40/level);
+  isPresent[i][j] = temp != 0;
+
+  if(i==j || i+j==9) isPresent[i][j] = 1;
+}
+for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
+  int temp = rand() % (40/level);
+
+  isMoving[i][j] = temp == 0;
+  if(i==j || i+j==9 || !isPresent[i][j]) isMoving[i][j] = 0;
+}
+
+}
+
 void gameReset() {
+  level++;
+  points+=100;
+
+  boardReset();
+ 
+  if(playerLose) {
+      lives = 3;
+  points = 0;
+
+  }
   playerLose = false;
   loseTime = 0;
-  lives = 3;
-  points = 0;
+
   gameStart = glfwGetTime();
   playerWin = false;
   playerFall = false, playerFallOff = false; 
@@ -188,7 +215,19 @@ void gameReset() {
 
 }
 
+void magicLife() {
+  if(!(playerX==playerZ or playerZ+playerX == 9)) return;
+  int temp = rand() % 500;
+  if(temp == 0) lives++;
+
+
+}
+
 void updatePos() {
+   if(glfwGetTime() - magicStamp >) {
+          magicLife();
+          magicStamp = glfwGetTime();
+        }
   for(int i = 0; i < 10; i++) {
     for(int j = 0; j< 10; j++) {
       float a = i*2+shiftX - 1.0;
@@ -198,12 +237,16 @@ void updatePos() {
       if(playerCoordX > a && playerCoordX < b && playerCoordZ > c && playerCoordZ < d) {
         playerX = i;
         playerZ = j;
+
+
         break;
       }
     }
   }
   if(playerX == 9 && playerZ == 9) {
     playerWin = true;
+
+
     if(winTime == 0) winTime = glfwGetTime();
     if(glfwGetTime() - winTime > 5) {
       gameReset();
@@ -230,6 +273,9 @@ void playerReset(int f = 1) {
 
   heartAnimate = true;
   if(lives==0) {
+    level = 1;
+  boardReset();
+
     playerLose = true;
     if(loseTime == 0) loseTime = glfwGetTime();
     return;
@@ -260,7 +306,7 @@ void checkCollision() {
   }
   if(isPresent[playerX][playerZ] == 0 && !playerJumpUp && !playerJumpDown && !playerJumpRight && !playerJumpLeft) playerFall = true;
   if(isMoving[playerX][playerZ] && playerCoordY - 1 <= blockCoordY + 3) playerReset();
-  if(isMoving[playerX][playerZ] && !playerJumpRight && !playerJumpUp && ! playerJumpLeft && !playerJumpDown) playerReset(); 
+  else if(isMoving[playerX][playerZ] && !playerJumpRight && !playerJumpUp && ! playerJumpLeft && !playerJumpDown) playerReset(); 
 }
 
 void genObstacles() {

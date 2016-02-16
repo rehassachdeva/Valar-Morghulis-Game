@@ -349,6 +349,21 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
   // Function is called first on GLFW_PRESS.
 
   if (action == GLFW_RELEASE) {
+    if(onMenu == true) {
+    if(key == GLFW_KEY_1) playerHouse = 1, onMenu = false;
+    if(key == GLFW_KEY_2) playerHouse = 2, onMenu = false;
+    if(key == GLFW_KEY_3) playerHouse = 3, onMenu = false;
+    if(key == GLFW_KEY_4) playerHouse = 4, onMenu = false;
+    if(key == GLFW_KEY_5) playerHouse = 5, onMenu = false;
+    if(key == GLFW_KEY_6) playerHouse = 6, onMenu = false;
+    if(key == GLFW_KEY_7) playerHouse = 7, onMenu = false;
+    if(key == GLFW_KEY_8) playerHouse = 8, onMenu = false;
+    if(key == GLFW_KEY_9) playerHouse = 9, onMenu = false;
+    
+    gameStart = glfwGetTime();
+    
+  }
+
     if(key == GLFW_KEY_R) {
       viewPtr[currentView] = (viewPtr[currentView]+1) % numSubViews[currentView]; 
     }
@@ -930,16 +945,16 @@ void createShapes() {
 
   static GLfloat color_buffer_data_player[36*3];
   for(int i=0; i<36*3; i+=3) {
-    color_buffer_data_player[i] = 0.2;
-    color_buffer_data_player[i+1] = 0.2;
-    color_buffer_data_player[i+2] = 0.2;
+    color_buffer_data_player[i] = 75.0/255.0;
+    color_buffer_data_player[i+1] = 11.0/255.0;
+    color_buffer_data_player[i+2] = 25.0/255.0;
   }
 
   static GLfloat color_buffer_data_limbs[36*3];
   for(int i=0; i<36*3; i+=3) {
     color_buffer_data_limbs[i] = 1;
-    color_buffer_data_limbs[i+1] =0;
-    color_buffer_data_limbs[i+2] = 0;
+    color_buffer_data_limbs[i+1] =220.0/255.0;
+    color_buffer_data_limbs[i+2] = 178.0/255.0;
 
   }
   static GLfloat color_buffer_data_temp[36*3];
@@ -1039,6 +1054,35 @@ void createRectangle ()
     -w/2,-h/2,0 // vertex 1
   };
 
+
+  w = 21, h = 10;
+
+  GLfloat vertex_buffer_data7 [] = {
+    -w/2,-h/2,0, // vertex 1
+    w/2,-h/2,0, // vertex 2
+    w/2, h/2,0, // vertex 3
+
+
+
+    w/2, h/2,0, // vertex 3
+    -w/2, h/2,0, // vertex 4
+    -w/2,-h/2,0 // vertex 1
+  };
+
+    w =20.5, h = 12;
+
+  GLfloat vertex_buffer_data8 [] = {
+    -w/2,-h/2,0, // vertex 1
+    w/2,-h/2,0, // vertex 2
+    w/2, h/2,0, // vertex 3
+
+
+
+    w/2, h/2,0, // vertex 3
+    -w/2, h/2,0, // vertex 4
+    -w/2,-h/2,0 // vertex 1
+  };
+
   GLfloat color_buffer_data_speedy [] = {
     1,0,0, // color 1
     1,0,0, // color 2
@@ -1084,9 +1128,11 @@ void createRectangle ()
   wood = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[205], GL_FILL);
 
   tree = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[68], GL_FILL);
-  arya = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data, texture_buffer_data, textureID[204], GL_FILL);
+  menu = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data7, texture_buffer_data, textureID[206], GL_FILL);
+  banner = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data8, texture_buffer_data, textureID[207], GL_FILL);
 
-
+for(int i=1; i<=9; i++)
+sigil[i] = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data4, texture_buffer_data, textureID[207+i], GL_FILL);
   throne = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data6, texture_buffer_data, textureID[71], GL_FILL);
 
   star = create3DTexturedObject(GL_TRIANGLES, 6, vertex_buffer_data2, texture_buffer_data, textureID[69], GL_FILL);
@@ -1142,8 +1188,8 @@ void createSphere(int slices, int stacks) {
       points[3*i + 2] = r*(cos(theta) * cos(phi));
 
       color[3*i] = 1;
-      color[3*i + 1] = 1;
-      color[3*i + 2] = 0;
+      color[3*i + 1] = 220.0/255.0;
+      color[3*i + 2] = 178.0/255.0;
 
       i++;
 
@@ -1152,15 +1198,47 @@ void createSphere(int slices, int stacks) {
       points[3*i + 2] = r*( cos(theta + M_PI / stacks) * cos(phi));
 
       color[3*i] = 1;
-      color[3*i + 1] = 1;
+      color[3*i + 1] = 220.0/255.0;
+      color[3*i + 2] = 178.0/255.0;
+
+      i++;
+    }
+  }
+  head = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
+
+
+  r = 0.6;
+  stacks = 2;
+   i=0, numPoints = 2 * (slices + 1) * stacks;
+
+
+  for (float theta = -M_PI / 2; theta < M_PI / 2 - 0.0001; theta += M_PI / stacks) {
+    for (float phi = -M_PI; phi <= M_PI + 0.0001; phi += 2 * M_PI / slices) {
+
+      points[3*i] = r*(cos(theta) * sin(phi));
+      points[3*i + 1] = r*(-sin(theta));
+      points[3*i + 2] = r*(cos(theta) * cos(phi));
+
+      color[3*i] = 0.5;
+      color[3*i + 1] = 0.5;
+      color[3*i + 2] = 0.5;
+
+      i++;
+
+      points[3*i] = r*(cos(theta + M_PI / stacks) * sin(phi));
+      points[3*i + 1] = r*( -sin(theta + M_PI / stacks));
+      points[3*i + 2] = r*( cos(theta + M_PI / stacks) * cos(phi));
+
+      color[3*i] = 0;
+      color[3*i + 1] = 0;
       color[3*i + 2] = 0;
 
       i++;
     }
   }
+  eyes = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
 
 
-  head = create3DObject(GL_TRIANGLE_STRIP, numPoints, points, color, GL_FILL);
 
 
 }
@@ -1262,6 +1340,16 @@ void initGL (GLFWwindow* window, int width, int height)
 
   textureID[204] = createTexture("images/grass.jpg");
   textureID[205] = createTexture("images/wood.jpg");
+  textureID[206] = createTexture("images/menu.jpg");
+  textureID[207] = createTexture("images/banner.jpg");
+    for(int i = 1; i<=9; i++) {
+    snprintf(ibuf, sizeof(ibuf), "images/%d.jpg", i);
+    textureID[207+i] = createTexture(ibuf);
+  }
+
+
+
+
 
 
 
@@ -1426,7 +1514,7 @@ void drawStars() {
   glm::mat4 VP = Matrices.projection * Matrices.view;
   glm::mat4 MVP;  // MVP = Projection * View * Model
   Matrices.model = glm::mat4(1.0f);
-  translateRectangle = glm::translate (glm::vec3(1.8,5,0));        // glTranslatef
+  translateRectangle = glm::translate (glm::vec3(3.4,5,0));        // glTranslatef
   Matrices.model *= (translateRectangle);
   MVP = VP * Matrices.model;
   glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -1530,7 +1618,7 @@ void drawLives() {
   glm::mat4 VP = Matrices.projection * Matrices.view;
   glm::mat4 MVP;  // MVP = Projection * View * Model
   Matrices.model = glm::mat4(1.0f);
-  translateRectangle = glm::translate (glm::vec3(-3.2,5,0));        // glTranslatef
+  translateRectangle = glm::translate (glm::vec3(-4.5,5,0));        // glTranslatef
   Matrices.model *= (translateRectangle);
   MVP = VP * Matrices.model;
   glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -1538,18 +1626,45 @@ void drawLives() {
   draw3DTexturedObject(hearts[i]);
 }
 
+
+void drawMenu() {
+  glUseProgram (textureProgramID);
+  glm::mat4 translateRectangle;
+  glm::mat4 VP = Matrices.projection * Matrices.view;
+  glm::mat4 MVP;  // MVP = Projection * View * Model
+
+  Matrices.model = glm::mat4(1.0f);
+  translateRectangle = glm::translate (glm::vec3(0,0,0));        // glTranslatef
+  Matrices.model *= (translateRectangle);
+  MVP = VP * Matrices.model;
+  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+  draw3DTexturedObject(banner);
+  Matrices.model = glm::mat4(1.0f);
+  translateRectangle = glm::translate (glm::vec3(0,-2,0));        // glTranslatef
+  Matrices.model *= (translateRectangle);
+  MVP = VP * Matrices.model;
+  glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
+  draw3DTexturedObject(menu);
+
+}
+
 void writeTexts() {
   glm::mat4 MVP;
   static int fontScale = 0;
   float fontScaleValue = 0.75 + 0.25*sinf(fontScale*M_PI/180.0f);
+
   glm::vec3 fontColor = getRGBfromHue (fontScale);
+  glm::vec3 fontcolor2 = getRGBfromHue (1);
+
 
   glm::mat4 translateText, scaleText;
   // Use font Shaders for next part of code
   glUseProgram(fontProgramID);
-
+if(onMenu == false) {
   Matrices.model = glm::mat4(1.0f);
-  translateText = glm::translate(glm::vec3(2.6, 4.8,0));
+  translateText = glm::translate(glm::vec3(4.4, 4.8,0));
   scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
   Matrices.model *= (translateText);
   MVP = Matrices.projection * Matrices.view * Matrices.model;
@@ -1559,6 +1674,8 @@ void writeTexts() {
   glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
   snprintf(buffer, sizeof(buffer), "%d", points);
   GL3Font.font->Render(buffer);
+
+
 
   Matrices.model = glm::mat4(1.0f);
   translateText = glm::translate(glm::vec3(-2, 4,0));
@@ -1571,20 +1688,12 @@ void writeTexts() {
   glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
   snprintf(buffer, sizeof(buffer), "%s", "Congratulations!");
   if(playerWin) GL3Font.font->Render(buffer);
-  Matrices.model = glm::mat4(1.0f);
-  translateText = glm::translate(glm::vec3(-2, 4,0));
-  scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
-  Matrices.model *= (translateText);
-  MVP = Matrices.projection * Matrices.view * Matrices.model;
 
-  // send font's MVP and font color to fond shaders
-  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
-  snprintf(buffer, sizeof(buffer), "%s", "You Lose!");
-  if(playerLose) GL3Font.font->Render(buffer);
+  
+
 
   Matrices.model = glm::mat4(1.0f);
-  translateText = glm::translate(glm::vec3(-2.4,4.8,0));
+  translateText = glm::translate(glm::vec3(-3.5,4.8,0));
   scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
   Matrices.model *= (translateText);
   MVP = Matrices.projection * Matrices.view * Matrices.model;
@@ -1594,6 +1703,31 @@ void writeTexts() {
   glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
   snprintf(buffer, sizeof(buffer), "%d", lives);
   GL3Font.font->Render(buffer);
+
+      Matrices.model = glm::mat4(1.0f);
+  translateText = glm::translate(glm::vec3(-1, 4,0));
+  scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
+  Matrices.model *= (translateText);
+  MVP = Matrices.projection * Matrices.view * Matrices.model;
+
+  // send font's MVP and font color to fond shaders
+  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
+  snprintf(buffer, sizeof(buffer), "%s", "You lose!");
+  if(playerLose) 
+    GL3Font.font->Render(buffer);
+
+   Matrices.model = glm::mat4(1.0f);
+  translateText = glm::translate(glm::vec3(-1.2, 4.8,0));
+  scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
+  Matrices.model *= (translateText);
+  MVP = Matrices.projection * Matrices.view * Matrices.model;
+
+  // send font's MVP and font color to fond shaders
+  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform3fv(GL3Font.fontColorID, 1, &fontColor[0]);
+  snprintf(buffer, sizeof(buffer), "%s%d", "Cleared: ", level);
+      GL3Font.font->Render(buffer);
 
   Matrices.model = glm::mat4(1.0f);
   translateText = glm::translate(glm::vec3(7.6,4.8,0));
@@ -1611,6 +1745,31 @@ void writeTexts() {
   seconds = currentTime % 60;
   snprintf(buffer, sizeof(buffer), "%d:%d:%d", hours, minutes, seconds);
   GL3Font.font->Render(buffer);
+}
+if(onMenu) {
+   Matrices.model = glm::mat4(1.0f);
+  translateText = glm::translate(glm::vec3(-3, 0,0));
+  scaleText = glm::scale(glm::vec3(fontScaleValue*4,fontScaleValue*4,fontScaleValue*4));
+  Matrices.model *= (translateText);
+  MVP = Matrices.projection * Matrices.view * Matrices.model;
+
+  // send font's MVP and font color to fond shaders
+  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform3fv(GL3Font.fontColorID, 1, &glm::vec3(0.6,0.6,0.6)[0]);
+  snprintf(buffer, sizeof(buffer), "%s", "CHOOSE YOUR KINGDOM!");
+  GL3Font.font->Render(buffer);
+    Matrices.model = glm::mat4(1.0f);
+  translateText = glm::translate(glm::vec3(-10, -1,0));
+  scaleText = glm::scale(glm::vec3(fontScaleValue,fontScaleValue,fontScaleValue));
+  Matrices.model *= (translateText);
+  MVP = Matrices.projection * Matrices.view * Matrices.model;
+
+  // send font's MVP and font color to fond shaders
+  glUniformMatrix4fv(GL3Font.fontMatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glUniform3fv(GL3Font.fontColorID, 1, &glm::vec3(0.2,0.2,0.2)[0]);
+  snprintf(buffer, sizeof(buffer), "%s", "1       2       3       4       5       6       7       8       9");
+  GL3Font.font->Render(buffer);
+}
   fontScale = (fontScale + 1) % 360;
 
 }
@@ -1623,14 +1782,16 @@ float camera_rotation_angle = 90;
 /* Edit this function according to your assignment */
 void draw ()
 {
-  if(glfwGetTime() - loseTime > 5 && playerLose) gameReset();
+  if(glfwGetTime() - loseTime > 5 && playerLose) playerReset();
 
   static int frames = 0;
-  drawFall();
+  if(onMenu == false)
+ {  drawFall();
   drawJump();
   updateObstacles();
   updateBlockMotion();
   drawMove();
+}
   float alpha = 0, beta = 0;
 
   // clear the color and depth in the frame buffer
@@ -1712,7 +1873,7 @@ void draw ()
   // Send our transformation to the currently bound shader, in the "MVP" uniform
   // For each model you render, since the MVP will be different (at least the M part)
   //  Don't change unless you are sure!!
-
+if(onMenu == false) {
   drawBackground();
   glm::mat4 translateCube;
   glm::mat4 rotateCube;
@@ -1746,6 +1907,7 @@ void draw ()
     glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0);     
     draw3DTexturedObject(tree);
   }
+  
 
 
   drawSoldier();
@@ -1785,8 +1947,11 @@ void draw ()
         MVP = VP * Matrices.model;
         glUniformMatrix4fv(Matrices.TexMatrixID, 1, GL_FALSE, &MVP[0][0]);
         glUniform1i(glGetUniformLocation(textureProgramID, "texSampler"), 0); 
+        if(i==j || i+j==9) 
+                draw3DTexturedObject(sigil[playerHouse]);
 
-        if(lightOn == true) {
+
+        else if(lightOn == true) {
           if(playerDirection == 1) {
             if(i-playerX<=2 && i>=playerX && playerZ >= j-1 && playerZ <= j+1) {
               if((i+j )% 2) 
@@ -1830,8 +1995,8 @@ void draw ()
 
         else draw3DTexturedObject(square[(i+j)%2]);
 
-
       }
+
 
       glUseProgram(programID);
       if((playerX == i && playerZ == j) || playerZ>9 || playerX>9 || playerX<0 || playerZ<0) {
@@ -1870,6 +2035,21 @@ void draw ()
 
           // draw3DObject draws the VAO given to it using current MVP matrix
           draw3DObject(head);
+          Matrices.model = glm::mat4(1.0f);
+          translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3+playerWin*3+0.3, playerCoordZ)); // glTranslatef
+
+
+          CubeTransform = translateCube;
+
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
+
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(eyes);
           Matrices.model = glm::mat4(1.0f);
           if(playerDirection == 3 or playerDirection == 4) {
             translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
@@ -2128,17 +2308,22 @@ void draw ()
     // draw3DObject draws the VAO given to it using current MVP matrix
     draw3DObject(coin);
   }
+}
   Matrices.view = glm::lookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
+ if(onMenu == false)  {
   drawSpeedy();
   drawTimer();
   drawStars();
   drawLives();
 
+
   if(starAnimate) drawAnimate(star);
   if(heartAnimate) drawAnimate(heart);
+}
 
   sphereRotation++;
   writeTexts();
+  if(onMenu) drawMenu();
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -2271,6 +2456,20 @@ int main (int argc, char** argv)
   initGL (window, width, height);
 
   double last_update_time = glfwGetTime(), current_time;
+
+
+for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
+  int temp = rand() % (50/level);
+  isPresent[i][j] = temp != 0;
+
+  if(i==j || i+j==9) isPresent[i][j] = 1;
+}
+for(int i=0; i<10; i++) for(int j=0;j<10;j++) {
+  int temp = rand() % (50/level);
+
+  isMoving[i][j] = temp == 0;
+  if(i==j || i+j==9 || !isPresent[i][j]) isMoving[i][j] = 0;
+}
 
   /* Draw in loop */
   while (!glfwWindowShouldClose(window)) {
