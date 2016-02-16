@@ -2171,6 +2171,22 @@ if(onMenu == false) {
 
             // draw3DObject draws the VAO given to it using current MVP matrix
             draw3DObject(head);
+           Matrices.model = glm::mat4(1.0f);
+          translateCube = glm::translate (glm::vec3(playerCoordX, playerCoordY+3+playerWin*3+0.3, playerCoordZ)); // glTranslatef
+
+
+          CubeTransform = translateCube;
+
+          Matrices.model *= CubeTransform;
+          MVP = VP * Matrices.model; // MVP = p * V * M
+
+          //  Don't change unless you are sure!!
+          // Copy MVP to normal shaders
+          glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+          // draw3DObject draws the VAO given to it using current MVP matrix
+          draw3DObject(eyes);
+          // draw3DObject draws the VAO given to it using
             Matrices.model = glm::mat4(1.0f);
             if(playerDirection == 3 or playerDirection == 4) {
               translateCube = glm::translate (glm::vec3(playerCoordX-0.5, playerCoordY+playerWin*3, playerCoordZ)); // glTranslatef
